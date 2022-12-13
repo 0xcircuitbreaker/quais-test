@@ -83,3 +83,14 @@ Parmas:
 - Addr to send from (z0-0, p-2, etc.)
 - Value to send (100)
 `ts-node scripts/send-tx.ts zone-0-0 zone-0-0 zone-1-1 100`
+
+
+# Usage with SolidityX
+Get the bytecode.
+`solc --bin contracts/ETX.sol &> contracts/etx-compiled`
+Or, with opcodes and binary:
+`solc --pretty-json --bin --asm contracts/ETX.sol &> contracts/compiled`
+
+Get the abi.
+`solc --abi contracts/ETX.sol -o contracts`
+

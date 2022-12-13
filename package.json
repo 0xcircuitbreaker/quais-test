@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "quais": "^0.1.2"
+    "quais": "0.1.3"
   },
   "devDependencies": {
     "@types/node": "^18.11.11"

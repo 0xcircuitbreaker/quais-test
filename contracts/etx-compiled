@@ -1,0 +1,15 @@
+Warning: This is a pre-release compiler version, please do not use it in production.
+
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> contract-data/ETX.sol
+
+Warning: Visibility for constructor is ignored. If you want the contract to be non-deployable, making it "abstract" is sufficient.
+ --> contract-data/ETX.sol:4:5:
+  |
+4 |     constructor() public payable {
+  |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+======= contract-data/ETX.sol:ETX =======
+Binary:
+60806040526000806000806000600180620186a06706f05b59d3b20000735a457339697cb56e5a9bfa5267ea80d2c6375d986000f690505060698060446000396000f3fe6080604052600080fdfea264697066735822122048e125ec447a897915e034dd8d5c5295f59dd458bb031f38518bd59acc02c08864736f6c63782c302e382e31382d646576656c6f702e323032322e31312e382b636f6d6d69742e36306161353861362e6d6f64005d

@@ -59,7 +59,7 @@ async function main() {
         txData = {
             to: toAddress,
             from: sendAddrData.address,
-            value: value,
+            value: 100,
             externalGasLimit: 10,
             externalGasPrice: 10,
             externalGasTip:  10,
