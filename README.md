@@ -1,9 +1,9 @@
 # Quais.js Test Suite
 
 ### Install and Setup
-`git clone https://github.com/dominant-strategies/quais-test`
-`cd quais-test`
-`npm install`
+1. `git clone https://github.com/dominant-strategies/quais-test`
+2. `cd quais-test`
+3. `npm install`
 
 Ensure you have ts-node installed globally:
 `npm install -g ts-node`
