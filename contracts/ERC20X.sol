@@ -23,7 +23,7 @@ pragma solidity ^0.8.0; // Note: You must have a version of SolidityX to compile
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract ERC20 {
+contract ERC20X {
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;

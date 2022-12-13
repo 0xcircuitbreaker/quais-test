@@ -78,7 +78,7 @@ Balance:  0
 4. Send Tx
 Send tx will send a transaction from a context to an address. The address will be read from the address-data file. This script
 can interpret internal to external transactions and add the external txData fields that trigger the ETx precompile.
-Parmas:
+Params:
 - Chain to send from (zone-0-0, prime, etc.)
 - Addr to send from (z0-0, p-2, etc.)
 - Value to send (100)
@@ -88,9 +88,17 @@ Parmas:
 # Usage with SolidityX
 Get the bytecode.
 `solc --bin contracts/ETX.sol &> contracts/etx-compiled`
+`solc --bin contracts/ERC20X.sol &> contracts/erc20x-compiled`
 Or, with opcodes and binary:
 `solc --pretty-json --bin --asm contracts/ETX.sol &> contracts/compiled`
 
 Get the abi.
 `solc --abi contracts/ETX.sol -o contracts`
+`solc --abi contracts/ERC20X.sol -o contracts`
 
+5. Solidity contracts
+Params:
+- Chain to send from (zone-0-0, prime, etc.)
+- Addr to send from (z0-0, p-2, etc.)
+`ts-node scripts/deploy-etx.ts zone-0-0 zone-0-0`
+`ts-node scripts/deploy-erc20x.ts zone-0-0 zone-0-0`
