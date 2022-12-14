@@ -7,7 +7,7 @@ contract ETX {
             result := etx(
                 0,                                          // temp variable, can be anything (unused)
                 0x5A457339697CB56E5a9BfA5267eA80d2c6375d98, // address to send to
-                500000000000000000,                         // amount to send in wei
+                500000,                                     // amount to send in wei
                 100000,                                     // gas limit (entire gas limit will be consumed and sent to destination)
                 1,                                          // miner tip in wei
                 1,                                          // base fee in wei

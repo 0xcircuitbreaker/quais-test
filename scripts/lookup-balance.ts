@@ -5,14 +5,6 @@ import { NodeData, allNodeData } from "./node-data";
 async function main() {
 
     var myArgs = process.argv.slice(2);
-    var sendContext = myArgs[0];
-    var data = allNodeData[sendContext] as NodeData;
-    
-    if (data == undefined) {
-      console.log("Context not provided");
-      return;
-    }
-
     var addr = myArgs[0];
     var addrData = allAddressData[addr] as AddressData;
     
@@ -20,8 +12,9 @@ async function main() {
       console.log("Address not provided");
       return;
     }
+    var sendNodeData = allNodeData[addrData.chain];
 
-    const provider = new quais.providers.JsonRpcProvider(data.provider);
+    const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
     await provider.ready;
 
     const balanace = await provider.getBalance(addrData.address);

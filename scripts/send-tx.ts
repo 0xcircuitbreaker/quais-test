@@ -5,21 +5,17 @@ import { allAddressData } from "./address-data"
 async function main() {
 
     var myArgs = process.argv.slice(2);
-    var sendContext = myArgs[0];
-    var sendNodeData = allNodeData[sendContext];
-    if (sendNodeData == undefined) {
-        console.log("Sending context not provided");
-        return;
-    }
 
-    var sendAddr = myArgs[1];
+    var sendAddr = myArgs[0];
     var sendAddrData = allAddressData[sendAddr];
     if (sendAddrData == undefined) {
         console.log("Sending address not provided");
         return;
     }
 
-    var receiveAddr = myArgs[2];
+    var sendNodeData = allNodeData[sendAddrData.chain];
+
+    var receiveAddr = myArgs[1];
     var receiveAddrData = allAddressData[receiveAddr];
     if (receiveAddrData == undefined) {
         console.log("Receiving context not provided");
@@ -27,7 +23,7 @@ async function main() {
     }
     var toAddress = sendAddrData.address;
 
-    var value = myArgs[3];
+    var value = myArgs[2];
     if (value == undefined) {
         console.log("Value not provided");
         return

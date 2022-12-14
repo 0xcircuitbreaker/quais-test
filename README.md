@@ -65,7 +65,6 @@ Block {
 3. Lookup balance
 Lookup balance will look up a balance on a chain for a given address. The address will be read from the address-data file.
 Params:
-- Chain to check (zone-0-0, prime, etc.)
 - Addr to lookup ("0x1930e0b28d3766e895df661de871a9b8ab70a4da")
 `ts-node scripts/lookup-balance.ts zone-0-0 0x1930e0b28d3766e895df661de871a9b8ab70a4da`
 
@@ -79,7 +78,6 @@ Balance:  0
 Send tx will send a transaction from a context to an address. The address will be read from the address-data file. This script
 can interpret internal to external transactions and add the external txData fields that trigger the ETx precompile.
 Params:
-- Chain to send from (zone-0-0, prime, etc.)
 - Addr to send from (z0-0, p-2, etc.)
 - Value to send (100)
 `ts-node scripts/send-tx.ts zone-0-0 zone-0-0 zone-1-1 100`

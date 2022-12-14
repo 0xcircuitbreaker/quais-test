@@ -9,17 +9,14 @@ const fs = require('fs');
 async function main() {
 
     var myArgs = process.argv.slice(2);
-    var sendNodeData = allNodeData[myArgs[0]];
-    if (sendNodeData == undefined) {
-        console.log("Sending context not provided");
-        return;
-    }
 
-    var sendAddrData = allAddressData[ myArgs[1]];
+    var sendAddrData = allAddressData[ myArgs[0]];
     if (sendAddrData == undefined) {
         console.log("Sending address not provided");
         return;
     }
+
+    var sendNodeData = allNodeData[sendAddrData.chain];
 
         
     // Paste bytecode from etx-compiled after solc run
@@ -36,7 +33,7 @@ async function main() {
     const myContract = new quais.ContractFactory(abi, bytecode, walletWithProvider);
     
     // If your contract requires constructor args, you can specify them here
-    const contract = await myContract.deploy();
+    const contract = await myContract.deploy({gasLimit: 10000000});
     
     console.log(contract.address);
     console.log(contract.deployTransaction);
