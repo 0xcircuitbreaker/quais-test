@@ -56,7 +56,7 @@ export const QUAI_CONTEXTS = [
     {
       name: "Hydra",
       shard: "region-2",
-      context: 2,
+      context: 1,
       byte: ["5a", "63"]
     },
     {

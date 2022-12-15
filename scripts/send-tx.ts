@@ -36,6 +36,11 @@ async function main() {
 
     await provider.ready;
 
+    provider.on("pending", (txHash) => {
+        if (txHash) {
+            process.stdout.write(`[${(new Date).toLocaleTimeString()}] Scanning transactions: ${txHash} \r`);
+        }
+    });
 
     console.log("Address", wallet.address)
     // normal transaction
@@ -50,7 +55,6 @@ async function main() {
         value: value,
     } as quais.providers.TransactionRequest;
 
-    console.log(receiveAddrData, sendAddrData)
     if(receiveAddrData.range != sendAddrData.range) {
         txData = {
             to: toAddress,
@@ -61,8 +65,6 @@ async function main() {
             externalGasTip:  10,
         };
     }
-
-    console.log(txData)
 
     const tx = await walletWithProvider.sendTransaction(txData);
 
