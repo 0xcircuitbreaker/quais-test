@@ -21,7 +21,7 @@ async function main() {
         console.log("Receiving context not provided");
         return;
     }
-    var toAddress = sendAddrData.address;
+    var toAddress = receiveAddrData.address;
 
     var value = myArgs[2];
     if (value == undefined) {
@@ -55,22 +55,28 @@ async function main() {
         value: value,
     } as quais.providers.TransactionRequest;
 
+
     if(receiveAddrData.range != sendAddrData.range) {
         txData = {
             to: toAddress,
             from: sendAddrData.address,
-            value: 100,
-            externalGasLimit: 10,
-            externalGasPrice: 10,
-            externalGasTip:  10,
+            value: 1,
+            externalGasLimit: 100000,
+            externalGasPrice: 1,
+            externalGasTip:  1,
+            gasLimit: 100000,
+            maxFeePerGas: 1,
+            maxPriorityFeePerGas: 1,
+            type: 2,
         };
     }
 
+    try {
     const tx = await walletWithProvider.sendTransaction(txData);
-
-    console.log({
-        tx,
-    });
+    console.log("Transaction sent", tx)
+    } catch (e: any) {
+        console.log(e.reason);
+    }
 }
 
 main();

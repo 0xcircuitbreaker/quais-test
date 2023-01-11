@@ -10,7 +10,7 @@ Ensure you have ts-node installed globally:
 
 ### Usage
 
-1. Latest block
+### 1. Latest block
 Params:
 - Chain to check (zone-0-0, prime, etc.)
 `ts-node scripts/latest-block.ts zone-1-2`
@@ -34,7 +34,7 @@ Height {
 }
 ```
 
-2. Get block
+### 2. Get block
 Get block will get a block at a given hash.
 Params:
 - Chain to check (zone-0-0, prime, etc.)
@@ -62,7 +62,7 @@ Block {
 }
 ```
 
-3. Lookup balance
+### 3. Lookup balance
 Lookup balance will look up a balance on a chain for a given address. The address will be read from the address-data file.
 Params:
 - Addr to lookup ("0x1930e0b28d3766e895df661de871a9b8ab70a4da")
@@ -74,13 +74,13 @@ Address 0x1930e0b28d3766e895df661de871a9b8ab70a4da
 Balance:  0
 ```
 
-4. Send Tx
+### 4. Send Tx
 Send tx will send a transaction from a context to an address. The address will be read from the address-data file. This script
 can interpret internal to external transactions and add the external txData fields that trigger the ETx precompile.
 Params:
 - Addr to send from (z0-0, p-2, etc.)
 - Value to send (100)
-`ts-node scripts/send-tx.ts zone-0-0 zone-0-0 zone-1-1 100`
+`ts-node scripts/send-tx.ts zone-0-0 zone-1-1 100`
 
 
 # Usage with SolidityX
