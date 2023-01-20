@@ -80,8 +80,14 @@ can interpret internal to external transactions and add the external txData fiel
 Params:
 - Addr to send from (z0-0, p-2, etc.)
 - Value to send (100)
+
 `ts-node scripts/send-tx.ts zone-0-0 zone-1-1 100`
 
+### 5. Fuzz to one shard
+`ts-node scripts/fuzz-tx-single-dest.ts from to total-tx delay range-0 range-1`
+
+### 6. Fuzz to many shards
+`ts-node scripts/fuzz-tx-many-dest.ts from total-tx delay range-0 range-1`
 
 # Usage with SolidityX
 Get the bytecode.
