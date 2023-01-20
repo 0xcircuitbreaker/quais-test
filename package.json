@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "quais": "^0.1.4"
+    "@quais/address": "file:../../code/quais.js/packages/address",
+    "quais": "^0.1.8"
   },
   "devDependencies": {
     "@types/node": "^18.11.11"
