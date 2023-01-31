@@ -31,10 +31,10 @@ const parsed = typeFlag({
         default: 100,
         alias: "h"
     },
-    randomize: {
+    addrList: {
         type: Boolean,
         default: false,
-        alias: "r"
+        alias: "q"
     }
 })
 
@@ -47,9 +47,9 @@ async function main() {
     let total = parsed.flags.total
     let loValue = parsed.flags.loValue
     let hiValue = parsed.flags.hiValue
-    let randomize = parsed.flags.randomize
+    let addrList = parsed.flags.addrList
 
-    logArgs(from, interval, total, loValue, hiValue, randomize)
+    logArgs(from, interval, total, loValue, hiValue, addrList)
     
     var sendAddrData = allAddressData[from];
     if (sendAddrData == undefined) {
@@ -78,7 +78,7 @@ async function main() {
             return;
         }
         var receiveAddr;
-        if(randomize) {
+        if(addrList) {
             receiveAddr = addressList[Math.floor(Math.random() * addressList.length)];
         } else {
             receiveAddr = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];

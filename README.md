@@ -90,8 +90,8 @@ Params:
 example: `ts-node scripts/fuzz-tx-single-dest.ts -f zone-0-0 -i 1 -t 2 -l 20 -h 100`
 
 ### 6. Fuzz to many shards
-`ts-node scripts/fuzz-tx-many-dest.ts -f <from> -i <interval> -t <total> -l <lo val> -h <hi val> --randomize`
-example: `ts-node scripts/fuzz-tx-many-dest.ts --f zone-0-1 -i 1 -t 100 -l 50 -h 120 --randomize`
+`ts-node scripts/fuzz-tx-many-dest.ts -f <from> -i <interval> -t <total> -l <lo val> -h <hi val> --addrList`
+example: `ts-node scripts/fuzz-tx-many-dest.ts --f zone-0-1 -i 1 -t 100 -l 50 -h 120 --addrList`
 
 # Usage with SolidityX
 Get the bytecode.
