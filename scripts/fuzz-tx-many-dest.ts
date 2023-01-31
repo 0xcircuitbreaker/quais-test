@@ -100,7 +100,8 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
     let shardTo = getShardFromAddress(toAddress)[0];
 
     console.log("From: ", shardFrom.shard, " To: ", shardTo.shard, " Value: ", value)
-
+    var feeData = await walletWithProvider.getFeeData() 
+    console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
     if(shardFrom != shardTo) {
         txData = {
             to: toAddress,
@@ -110,8 +111,8 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
             externalGasPrice: 10000000000,
             externalGasTip:  10000000000,
             gasLimit: 100000,
-            maxFeePerGas: 1,
-            maxPriorityFeePerGas: 1,
+            maxFeePerGas: Number(feeData.maxFeePerGas),
+            maxPriorityFeePerGas: Number(feeData.maxPriorityFeePerGas),
             type: 2,
         };
     }
