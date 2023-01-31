@@ -1,56 +1,63 @@
 import { quais } from "quais";
 import { allNodeData } from "./node-data";
-import { allAddressData } from "./address-data"
+import { allAddressData } from "./coinbase-addresses"
+import { addressList } from "./address-list";
+import { typeFlag } from 'type-flag'
+import { getShardFromAddress } from "./shard-data";
+
+const parsed = typeFlag({
+    from: {
+        type: String,
+        default: "zone-0-0",
+        alias: "f"
+    },
+    receive: {
+        type: String,
+        default: "0x22d0767679532b23718Ea2cc8A4A3b4Aa9e1536c",
+        alias: "r"
+    },
+    interval: {
+        type: Number,
+        default: 1,
+        alias: "i"
+    },
+    total: {
+        type: Number,
+        default: 10,
+        alias: "t"
+    },
+    loValue: {
+        type: Number,
+        default: 1,
+        alias: "l"
+    },
+    hiValue: {
+        type: Number,
+        default: 100,
+        alias: "h"
+    },
+})
+
+const aggBalances: { [key: string]: number } = {};
 
 async function main() {
+    
+    let from = parsed.flags.from
+    let receive = parsed.flags.receive
+    let interval = parsed.flags.interval
+    let total = parsed.flags.total
+    let loValue = parsed.flags.loValue
+    let hiValue = parsed.flags.hiValue
 
-    var myArgs = process.argv.slice(2);
-
-    var sendAddr = myArgs[0];
-    var sendAddrData = allAddressData[sendAddr];
+    logArgs(from, receive, interval, total, loValue, hiValue)
+    
+    var sendAddrData = allAddressData[from];
     if (sendAddrData == undefined) {
         console.log("Sending address not provided");
         return;
     }
 
     var sendNodeData = allNodeData[sendAddrData.chain];
-
-    var receiveAddr = myArgs[1];
-    var receiveAddrData = allAddressData[receiveAddr];
-    if (receiveAddrData == undefined) {
-        console.log("Receiving context not provided");
-        return;
-    }
-    var toAddress = receiveAddrData.address;
-
-    var total = myArgs[2];
-    if (total == undefined) {
-        console.log("total num not provided");
-        return
-    }
-    var totalNum = parseInt(total);
-
-    var timeDiff = myArgs[3];
-    if (timeDiff == undefined) {
-        console.log("timeDiff not provided");
-        return
-    }
-    var timeDiffNum = parseInt(timeDiff);
-
-    var valRange1 = myArgs[4];
-    if (valRange1 == undefined) {
-        console.log("valRange1 not provided");
-        return
-    }
-    var valRange1Num = parseInt(valRange1);
-
-
-    var valRange2 = myArgs[5];
-    if (valRange2 == undefined) {
-        console.log("valRange2 not provided");
-        return
-    }
-    var valRange2Num = parseInt(valRange2);
 
     const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
     const wallet = await quais.Wallet.fromEncryptedJson(sendAddrData.keystore, "");
@@ -59,27 +66,36 @@ async function main() {
 
     await provider.ready;
 
-    const balanace = await provider.getBalance(wallet.address);
-    console.log("Address", wallet.address)
-    console.log("Balance: ", balanace);
+    console.log("Sending Address: ", wallet.address)
 
+    for(var i = 0; i < total; i++) {
+        var value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
-    for(var i = 0; i < totalNum; i++) {
-        var value = Math.floor(Math.random() * (valRange2Num - valRange1Num + 1) + valRange1Num);
-        await sendTx(value, toAddress, sendAddrData, receiveAddrData, walletWithProvider);
-        await sleep(timeDiffNum);
+        const balanace = await provider.getBalance(wallet.address);
+        console.log("Balance: ", Number(balanace));
+        if(Number(balanace) < value) {
+            console.log("Insufficient balance");
+            return;
+        }
+        await sendTx(value, receive, sendAddrData, walletWithProvider);
+        await sleep(interval);
     }
+    console.log("Aggregated Balances: ", aggBalances);
 }
 
-async function sendTx(value: number, toAddress: string, sendAddrData: any, receiveAddrData: any, walletWithProvider: any) {
+async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any) {
     var txData = {
         to: toAddress,
         from: sendAddrData.address,
         value: value,
     } as quais.providers.TransactionRequest;
 
+    let shardFrom = getShardFromAddress(sendAddrData.address)[0];
+    let shardTo = getShardFromAddress(toAddress)[0];
 
-    if(receiveAddrData.range != sendAddrData.range) {
+    console.log("From: ", shardFrom.shard, " To: ", shardTo.shard, " Value: ", value)
+
+    if(shardFrom != shardTo) {
         txData = {
             to: toAddress,
             from: sendAddrData.address,
@@ -97,12 +113,27 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, recei
     try {
         const tx = await walletWithProvider.sendTransaction(txData);
         console.log("Transaction sent", tx)
+        if(aggBalances[toAddress] == undefined) {
+            aggBalances[toAddress] = 0;
+        }
+        aggBalances[toAddress] += Number(value);
         } catch (e: any) {
             console.log(e.reason);
         }
+        
 }
 
 function sleep(s: number) {
     return new Promise(resolve => setTimeout(resolve, s * 1000));
 }
+
+function logArgs(from: string, to: string, interval: number, total: number, loValue: number, hiValue: number) {
+    console.log("From: ", from);
+    console.log("Receive Address: ", to);
+    console.log("Interval: ", interval);
+    console.log("Total: ", total);
+    console.log("Low Value: ", loValue);
+    console.log("High Value: ", hiValue);
+}
+
 main();

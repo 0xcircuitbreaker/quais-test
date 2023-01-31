@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "quais": "^0.1.8"
+    "quais": "^0.1.8",
+    "type-flag": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.11"

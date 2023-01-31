@@ -1,24 +1,26 @@
 import { quais } from "quais";
-import { AddressData, allAddressData } from "./address-data";
+import { AddressData, allAddressData } from "./coinbase-addresses";
 import { NodeData, allNodeData } from "./node-data";
+import { getFlag } from 'type-flag'
+import { getShardFromAddress } from "./shard-data";
 
+let address = getFlag("--address,-a", String);
 async function main() {
-
-    var myArgs = process.argv.slice(2);
-    var addr = myArgs[0];
-    var addrData = allAddressData[addr] as AddressData;
-    
+    var addrData = allAddressData[address as string] as AddressData;
+    var sendNodeData
     if (addrData == undefined) {
-      console.log("Address not provided");
-      return;
+      let shardData = getShardFromAddress(address as string)
+      sendNodeData = allNodeData[shardData[0].shard];
+    } else {
+      sendNodeData = allNodeData[addrData.chain];
+      address = addrData.address
     }
-    var sendNodeData = allNodeData[addrData.chain];
 
     const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
     await provider.ready;
 
-    const balanace = await provider.getBalance(addrData.address);
-    console.log("Address", addrData.address)
+    const balanace = await provider.getBalance(address as string);
+    console.log("Address: ", address)
     console.log("Balance: ", Number(balanace));
 }
 
