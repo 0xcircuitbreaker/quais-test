@@ -127,7 +127,7 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
 }
 
 function sleep(s: number) {
-    return new Promise(resolve => setTimeout(resolve, s * 1000));
+    return new Promise(resolve => setTimeout(resolve, s));
 }
 
 function logArgs(from: string, to: string, interval: number, total: number, loValue: number, hiValue: number) {

@@ -13,7 +13,7 @@ const parsed = typeFlag({
     },
     interval: {
         type: Number,
-        default: 1,
+        default: 1000,
         alias: "i"
     },
     total: {
@@ -131,7 +131,7 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
 }
 
 function sleep(s: number) {
-    return new Promise(resolve => setTimeout(resolve, s * 1000));
+    return new Promise(resolve => setTimeout(resolve, s));
 }
 
 function logArgs(from: string, interval: number, total: number, loValue: number, hiValue: number, randomize: boolean) {
