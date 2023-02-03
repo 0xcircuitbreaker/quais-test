@@ -87,7 +87,7 @@ Params:
 
 ### 5. Fuzz to one shard
 `ts-node scripts/fuzz-tx-single-dest.ts -f <from> -r <to address> -i <interval> -t <total> -l <lo val> -h <hi val>`
-example: `ts-node scripts/fuzz-tx-single-dest.ts -f zone-0-0 -i 100 -t 2 -l 20 -h 100`
+example: `ts-node scripts/fuzz-tx-single-dest.ts -f zone-0-0 -i 400 -t 10000 -l 20 -h 100 -r 0x1027D27Fa9E4A92D6f7CB74a95941c55374c735E`
 
 ### 6. Fuzz to many shards
 `ts-node scripts/fuzz-tx-many-dest.ts -f <from> -i <interval> -t <total> -l <lo val> -h <hi val> --addrList`

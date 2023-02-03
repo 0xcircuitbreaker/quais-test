@@ -34,7 +34,7 @@ const parsed = typeFlag({
     addrList: {
         type: Boolean,
         default: false,
-        alias: "q"
+        alias: "a"
     }
 })
 
@@ -81,7 +81,8 @@ async function main() {
         if(addrList) {
             receiveAddr = addressList[Math.floor(Math.random() * addressList.length)];
         } else {
-            receiveAddr = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];
+            var receiveData = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];
+            receiveAddr = allAddressData[receiveData].address;
         }
         await sendTx(value, receiveAddr, sendAddrData, walletWithProvider);
         await sleep(interval);
@@ -99,7 +100,8 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
     let shardFrom = getShardFromAddress(sendAddrData.address)[0];
     let shardTo = getShardFromAddress(toAddress)[0];
 
-    console.log("From: ", shardFrom.shard, " To: ", shardTo.shard, " Value: ", value)
+    console.log("toAddress: ", toAddress, " shardTo: ", shardTo)
+    console.log("From: ", shardFrom, " To: ", shardTo, " Value: ", value)
     var feeData = await walletWithProvider.getFeeData() 
     console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
     if(shardFrom != shardTo) {
