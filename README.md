@@ -66,7 +66,9 @@ Block {
 Lookup balance will look up a balance on a chain for a given address. The address will be read from the address-data file.
 Params:
 - Addr to lookup ("0x1930e0b28d3766e895df661de871a9b8ab70a4da")
-`ts-node scripts/lookup-balance.ts zone-0-0 0x1930e0b28d3766e895df661de871a9b8ab70a4da`
+`ts-node scripts/lookup-balance.ts -a zone-0-0`
+OR 
+`ts-node scripts/lookup-balance.ts -a 0x1930e0b28d3766e895df661de871a9b8ab70a4da`
 
 Example expected result:
 ```
@@ -80,8 +82,16 @@ can interpret internal to external transactions and add the external txData fiel
 Params:
 - Addr to send from (z0-0, p-2, etc.)
 - Value to send (100)
+
 `ts-node scripts/send-tx.ts zone-0-0 zone-1-1 100`
 
+### 5. Fuzz to one shard
+`ts-node scripts/fuzz-tx-single-dest.ts -f <from> -r <to address> -i <interval> -t <total> -l <lo val> -h <hi val>`
+example: `ts-node scripts/fuzz-tx-single-dest.ts -f zone-0-0 -i 400 -t 10000 -l 20 -h 100 -r 0x1027D27Fa9E4A92D6f7CB74a95941c55374c735E`
+
+### 6. Fuzz to many shards
+`ts-node scripts/fuzz-tx-many-dest.ts -f <from> -i <interval> -t <total> -l <lo val> -h <hi val> --addrList`
+example: `ts-node scripts/fuzz-tx-many-dest.ts --f zone-0-1 -i 100 -t 100 -l 50 -h 120 --addrList`
 
 # Usage with SolidityX
 Get the bytecode.

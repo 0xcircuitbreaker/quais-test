@@ -1,7 +1,7 @@
 //load 'quais' and 'fs'
 import { quais } from "quais";
 import { allNodeData } from "./node-data";
-import { allAddressData } from "./address-data"
+import { allAddressData } from "./coinbase-addresses"
 
 const fs = require('fs');
 
@@ -33,7 +33,7 @@ async function main() {
     const myContract = new quais.ContractFactory(abi, bytecode, walletWithProvider);
     
     // If your contract requires constructor args, you can specify them here
-    const contract = await myContract.deploy({gasLimit: 10000000});
+    const contract = await myContract.deploy({gasLimit: 99999});
     
     console.log(contract.address);
     console.log(contract.deployTransaction);

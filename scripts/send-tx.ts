@@ -1,6 +1,6 @@
 import { quais } from "quais";
 import { allNodeData } from "./node-data";
-import { allAddressData } from "./address-data"
+import { allAddressData } from "./coinbase-addresses"
 
 async function main() {
 

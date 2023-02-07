@@ -9,8 +9,8 @@ export interface AllNodeData {
 
 export const allNodeData: AllNodeData = {
     prime: {
-      url: "http://localhost:8579",
-      provider: "http://localhost:8579",
+      url: "http://localhost:8546",
+      provider: "http://localhost:8546",
     },
     "region-0": {
       url: "http://localhost:8578",
