@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@quais/address": "file:../../code/quais.js/packages/address",
+    "@quais/contracts": "file:../../code/quais.js/packages/contracts",
     "quais": "^0.1.8",
     "type-flag": "^3.0.0"
   },

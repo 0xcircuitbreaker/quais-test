@@ -34,17 +34,11 @@ async function main() {
     
     // TODO: Fix the ability to retrieve the right nonce.
     console.log("walletWithProvider.address", walletWithProvider.address)
-    const nonce = await provider.getTransactionCount(sendAddrData.address);
-    const contractBytes = await grindContractAddress(nonce, "zone-0-0", walletWithProvider.address, bytecode)
-    console.log("contractBytes", contractBytes);
 
-    const myContract = new quais.ContractFactory(abi, contractBytes, walletWithProvider);
-
-    // If your contract requires constructor args, you can specify them here
+    const myContract = new quais.ContractFactory(abi, bytecode, walletWithProvider);
     const contract = await myContract.deploy({ gasLimit: 99999 });
     
-    console.log("CA", contract.address);
-    console.log("DATA", contract.deployTransaction);
+    console.log("Contract deployed to:", contract.address);
 }
 
 main();
