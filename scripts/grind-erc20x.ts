@@ -2,7 +2,6 @@
 import { quais } from "quais";
 import { allNodeData } from "./node-data";
 import { allAddressData } from "./coinbase-addresses"
-const { grindContractAddress } = require("@quais/address")
 
 const fs = require('fs');
 
