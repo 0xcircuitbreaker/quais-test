@@ -29,13 +29,15 @@ async function main() {
     //to create 'signer' object;here 'account'
     const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
     const wallet = await quais.Wallet.fromEncryptedJson(sendAddrData.keystore, "");
-    const walletWithProvider = new quais.Wallet("0x24ae8967e4e0e15b4b2c69ef93a6d6ebc199405f46c93dbfd43d99d730235a95", provider);
+    const walletWithProvider = new quais.Wallet(wallet.privateKey, provider);
     await provider.ready;
     
     // TODO: Fix the ability to retrieve the right nonce.
     console.log("walletWithProvider.address", walletWithProvider.address)
 
     const myContract = new quais.ContractFactory(abi, bytecode, walletWithProvider);
+
+    // console.log("Deploying contract...", myContract.interface);
     const contract = await myContract.deploy({ gasLimit: 99999 });
     
     console.log("Contract deployed to:", contract.address);
