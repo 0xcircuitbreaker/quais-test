@@ -1,9 +1,7 @@
 import { quais } from "quais";
 import { allNodeData } from "./node-data";
 import { allAddressData } from "./coinbase-addresses"
-import { addressList } from "./address-list";
 import { typeFlag } from 'type-flag'
-const { getShardFromAddress } = require("@quais/address")
 
 const parsed = typeFlag({
     from: {
@@ -90,12 +88,12 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
         value: value,
     } as quais.providers.TransactionRequest;
 
-    let shardFrom = getShardFromAddress(sendAddrData.address)[0];
-    let shardTo = getShardFromAddress(toAddress)[0];
+    let shardFrom = quais.utils.getShardFromAddress(sendAddrData.address);
+    let shardTo = quais.utils.getShardFromAddress(toAddress);
 
-    console.log("From: ", shardFrom.shard, " To: ", shardTo.shard, " Value: ", value)
+    console.log("From: ", shardFrom, " To: ", shardTo, " Value: ", value)
 
-    console.log("From: ", shardFrom.shard, " To: ", shardTo.shard, " Value: ", value)
+    console.log("From: ", shardFrom, " To: ", shardTo, " Value: ", value)
     var feeData = await walletWithProvider.getFeeData() 
     console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
     if(shardFrom != shardTo) {
