@@ -68,6 +68,7 @@ async function main() {
 
     console.log("Sending Address: ", wallet.address)
 
+    var nonce = await provider.getTransactionCount(wallet.address);
     for(var i = 0; i < total; i++) {
         var value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
@@ -84,13 +85,14 @@ async function main() {
             var receiveData = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];
             receiveAddr = allAddressData[receiveData].address;
         }
-        await sendTx(value, receiveAddr, sendAddrData, walletWithProvider);
+        await sendTx(value, receiveAddr, sendAddrData, walletWithProvider, nonce);
         await sleep(interval);
+        nonce++;
     }
     console.log("Aggregated Balances: ", aggBalances);
 }
 
-async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any) {
+async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any, nonce: number) {
     var txData = {
         to: toAddress,
         from: sendAddrData.address,
@@ -116,6 +118,7 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
             maxFeePerGas: Number(feeData.maxFeePerGas),
             maxPriorityFeePerGas: Number(feeData.maxPriorityFeePerGas),
             type: 2,
+            nonce: nonce,
         };
     }
 
