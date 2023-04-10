@@ -45,7 +45,7 @@ function deriveAddress(HDKey, opts) {
     let childKey = HDKey.derive(path + "/" + index.toString())
     let signingKey = new SigningKey(childKey.privateKey)
     let address = computeAddress(signingKey.publicKey)
-    return address
+    return { address: address, childKey: signingKey.privateKey }
 }
 
 
@@ -54,7 +54,7 @@ function grindAddress(keyfile, path, index, shard) {
     let newAddress = ""
     while (!found) {
       newAddress = deriveAddress(keyfile, { hdPath: path, index: index })
-      let addrShard = getShardFromAddress(newAddress)
+      let addrShard = getShardFromAddress(newAddress.address)
         // Check if address is in a shard
       if (addrShard !== undefined) {
         // Check if address is in correct shard
@@ -66,10 +66,10 @@ function grindAddress(keyfile, path, index, shard) {
       index++
     }
     return {
-      address: newAddress,
+      address: newAddress.address,
       index: index,
       path: path + "/" + index.toString(),
-      privateKey: quais.utils.hexlify(keyfile.privateKey)
+      privateKey: quais.utils.hexlify(newAddress.childKey)
     }
 }
 

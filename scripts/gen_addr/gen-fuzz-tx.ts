@@ -69,9 +69,7 @@ async function main() {
 
     let wallet = JSON.parse(genWallet);
     let shardKey = wallet[sendAddrData.chain as any];
-    console.log(shardKey);
     let privKey = quais.utils.arrayify(shardKey.privateKey);
-    console.log(privKey);
     const walletWithProvider = new quais.Wallet(privKey, provider);
 
     await provider.ready;
