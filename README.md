@@ -110,3 +110,8 @@ Params:
 - Addr to send from (z0-0, p-2, etc.)
 `ts-node scripts/deploy-etx.ts zone-0-0 zone-0-0`
 `ts-node scripts/deploy-erc20x.ts zone-0-0 zone-0-0`
+
+6. Generate new wallet addresses
+`node scripts/gen_addr/generate_addresses.js`
+This will output a genWallet.json that can be imported by `scripts/gen_addr/gen-fuzz-tx.ts` the `gen-fuzz-tx.ts` takes the same params as `fuzz-tx-many-dest.ts`
+`generate_addresses.js` also outputs a `network.env` that can be imported into your `go-quai` network.env
