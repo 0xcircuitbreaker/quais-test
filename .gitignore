@@ -4,3 +4,5 @@
 solc
 compiled
 build/*
+genWallet.json
+network.env

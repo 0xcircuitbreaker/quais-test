@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@scure/bip32": "^1.2.0",
+    "bip39": "^3.1.0",
     "quais": "^0.1.8",
     "type-flag": "^3.0.0"
   },
