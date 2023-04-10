@@ -117,7 +117,6 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
     if(shardFrom != shardTo) {
         txData = {
             to: toAddress,
-            from: sendAddrData.address,
             value: value,
             externalGasLimit: 110000,
             externalGasPrice:  Number(feeData.maxFeePerGas) * 2,
