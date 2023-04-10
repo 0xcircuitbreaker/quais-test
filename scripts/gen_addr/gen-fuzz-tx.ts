@@ -103,7 +103,7 @@ async function main() {
 async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any, nonce: number) {
     var txData = {
         to: toAddress,
-        from: sendAddrData.address,
+        from: walletWithProvider.address,
         value: value,
     } as quais.providers.TransactionRequest;
 
