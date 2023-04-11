@@ -1,7 +1,7 @@
 import { quais } from "quais";
 import { allNodeData } from "../node-data";
 import { allAddressData } from "../coinbase-addresses"
-import { addressList } from "../address-list";
+import { addressList, addressList2, shardList } from "../address-list";
 import { typeFlag } from 'type-flag'
 import { getShardFromAddress } from "../shard-data";
 import * as fs from 'fs';
@@ -77,6 +77,13 @@ async function main() {
     console.log("Sending Address: ", walletWithProvider.address)
 
     var nonce = await provider.getTransactionCount(walletWithProvider.address);
+
+    let shardFrom = getShardFromAddress(sendAddrData.address)[0];
+    let indexOfShard = shardList.indexOf(shardFrom.shard);
+
+    const slicedShardList = shardList.slice(indexOfShard, indexOfShard + 2);
+
+
     for(var i = 0; i < total; i++) {
         var value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
@@ -86,30 +93,36 @@ async function main() {
             console.log("Insufficient balance");
             return;
         }
+
         var receiveAddr;
-        if(addrList) {
-            receiveAddr = addressList[Math.floor(Math.random() * addressList.length)];
+
+        const sendExternal = Math.random() < 0.2;
+        if(sendExternal) {
+            // Get random shard from the list of shards
+            const randomShard = slicedShardList[Math.floor(Math.random() * slicedShardList.length)];
+            const shardAddr = addressList2[randomShard];
+
+            receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
         } else {
-            var receiveData = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];
-            receiveAddr = allAddressData[receiveData].address;
+            const shardAddr = addressList2[shardFrom.shard];
+            receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
         }
-        await sendTx(value, receiveAddr, sendAddrData, walletWithProvider, nonce);
+
+        await sendTx(value, receiveAddr, sendAddrData, walletWithProvider, nonce, shardFrom);
         await sleep(interval);
         nonce++;
     }
     console.log("Aggregated Balances: ", aggBalances);
 }
 
-async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any, nonce: number) {
+async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any, nonce: number, shardFrom: any) {
     var txData = {
         to: toAddress,
         from: walletWithProvider.address,
         value: value,
     } as quais.providers.TransactionRequest;
 
-    let shardFrom = getShardFromAddress(sendAddrData.address)[0];
     let shardTo = getShardFromAddress(toAddress)[0];
-
 
     var feeData = await walletWithProvider.getFeeData() 
     if(shardFrom != shardTo) {
