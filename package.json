@@ -6,14 +6,18 @@
   "dependencies": {
     "@scure/bip32": "^1.2.0",
     "bip39": "^3.1.0",
+    "fs": "^0.0.1-security",
     "quais": "^0.1.8",
     "type-flag": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.11"
+    "@types/node": "^18.11.11",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gen-fuzz-tx": "ts-node scripts/gen_addr/gen-fuzz-tx.ts --project tsconfig.json"
   },
   "author": "",
   "license": "ISC"

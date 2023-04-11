@@ -1,10 +1,10 @@
-import { quais } from "quais";
-import { allNodeData } from "../node-data";
-import { allAddressData } from "../coinbase-addresses"
-import { addressList } from "../address-list";
-import { typeFlag } from 'type-flag'
-import { getShardFromAddress } from "../shard-data";
-import fs from 'fs';
+import {quais} from "quais";
+import {allNodeData} from "../node-data";
+import {allAddressData} from "../coinbase-addresses"
+import {addressList} from "../address-list";
+import {typeFlag} from 'type-flag'
+import {getShardFromAddress} from "../shard-data";
+import * as fs from 'fs';
 
 const parsed = typeFlag({
     from: {
@@ -43,8 +43,8 @@ const inputFilePath = 'genWallet.json';
 
 const aggBalances: { [key: string]: number } = {};
 
-async function main() {
-    
+(async () => {
+
     let from = parsed.flags.from
     let interval = parsed.flags.interval
     let total = parsed.flags.total
@@ -53,44 +53,44 @@ async function main() {
     let addrList = parsed.flags.addrList
 
     logArgs(from, interval, total, loValue, hiValue, addrList)
-    
-    var sendAddrData = allAddressData[from];
+
+    let sendAddrData = allAddressData[from];
     if (sendAddrData == undefined) {
         console.log("Sending address not provided");
         return;
     }
 
-    var sendNodeData = allNodeData[sendAddrData.chain];
+    let sendNodeData = allNodeData[sendAddrData.chain];
 
     const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
 
-
     const genWallet = await fs.promises.readFile(inputFilePath, 'utf8')
 
-    let wallet = JSON.parse(genWallet);
-    let shardKey = wallet[sendAddrData.chain as any];
-    let privKey = quais.utils.arrayify(shardKey.privateKey);
+    const wallet = JSON.parse(genWallet);
+    const shardKey = wallet[sendAddrData.chain as any];
+    const privKey = quais.utils.arrayify(shardKey.privateKey);
     const walletWithProvider = new quais.Wallet(privKey, provider);
 
     await provider.ready;
 
+
     console.log("Sending Address: ", walletWithProvider.address)
 
-    var nonce = await provider.getTransactionCount(walletWithProvider.address);
-    for(var i = 0; i < total; i++) {
-        var value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
+    let nonce = await provider.getTransactionCount(walletWithProvider.address);
+    for (let i = 0; i < total; i++) {
+        let value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
         const balanace = await provider.getBalance(walletWithProvider.address);
         console.log("Balance: ", Number(balanace));
-        if(Number(balanace) < value) {
+        if (Number(balanace) < value) {
             console.log("Insufficient balance");
             return;
         }
-        var receiveAddr;
-        if(addrList) {
+        let receiveAddr;
+        if (addrList) {
             receiveAddr = addressList[Math.floor(Math.random() * addressList.length)];
         } else {
-            var receiveData = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];
+            let receiveData = Object.keys(allAddressData)[Math.floor(Math.random() * Object.keys(allAddressData).length)];
             receiveAddr = allAddressData[receiveData].address;
         }
         await sendTx(value, receiveAddr, sendAddrData, walletWithProvider, nonce);
@@ -98,10 +98,10 @@ async function main() {
         nonce++;
     }
     console.log("Aggregated Balances: ", aggBalances);
-}
+})();
 
 async function sendTx(value: number, toAddress: string, sendAddrData: any, walletWithProvider: any, nonce: number) {
-    var txData = {
+    let txData = {
         to: toAddress,
         from: walletWithProvider.address,
         value: value,
@@ -112,16 +112,16 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
 
     console.log("toAddress: ", toAddress, " shardTo: ", shardTo)
     console.log("From: ", shardFrom, " To: ", shardTo, " Value: ", value)
-    var feeData = await walletWithProvider.getFeeData() 
+    let feeData = await walletWithProvider.getFeeData()
     console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
-    if(shardFrom != shardTo) {
+    if (shardFrom != shardTo) {
         txData = {
             to: toAddress,
             from: walletWithProvider.address,
             value: value,
             externalGasLimit: 110000,
-            externalGasPrice:  Number(feeData.maxFeePerGas) * 2,
-            externalGasTip:  Number(feeData.maxPriorityFeePerGas) * 2,
+            externalGasPrice: Number(feeData.maxFeePerGas) * 2,
+            externalGasTip: Number(feeData.maxPriorityFeePerGas) * 2,
             gasLimit: 100000,
             maxFeePerGas: Number(feeData.maxFeePerGas),
             maxPriorityFeePerGas: Number(feeData.maxPriorityFeePerGas),
@@ -133,14 +133,14 @@ async function sendTx(value: number, toAddress: string, sendAddrData: any, walle
     try {
         const tx = await walletWithProvider.sendTransaction(txData);
         console.log("Transaction sent", tx)
-        if(aggBalances[toAddress] == undefined) {
+        if (aggBalances[toAddress] == undefined) {
             aggBalances[toAddress] = 0;
         }
         aggBalances[toAddress] += Number(value);
-        } catch (e: any) {
-            console.log(e.reason);
-        }
-        
+    } catch (e: any) {
+        console.log(e.reason);
+    }
+
 }
 
 function sleep(s: number) {
@@ -155,5 +155,3 @@ function logArgs(from: string, interval: number, total: number, loValue: number,
     console.log("High Value: ", hiValue);
     console.log("Randomize: ", randomize);
 }
-
-main();
