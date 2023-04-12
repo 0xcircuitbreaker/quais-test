@@ -36,6 +36,11 @@ const parsed = typeFlag({
         type: Boolean,
         default: false,
         alias: "a"
+    },
+    etxRatio: {
+        type: Number,
+        default: 0.5,
+        alias: "e"
     }
 })
 
@@ -96,7 +101,7 @@ async function main() {
 
         var receiveAddr;
 
-        const sendExternal = Math.random() < 0.2;
+        const sendExternal = Math.random() < parsed.flags.etxRatio;
         if(sendExternal) {
             // Get random shard from the list of shards
             const randomShard = slicedShardList[Math.floor(Math.random() * slicedShardList.length)];
