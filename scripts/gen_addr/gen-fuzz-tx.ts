@@ -5,7 +5,6 @@ import { typeFlag } from 'type-flag'
 import { getShardFromAddress } from "../shard-data";
 import * as fs from 'fs';
 import { CheckBalanceBackoff, RetryLimitExceededError } from "../../utils/rpc";
-import { signTransactionWithOpenSSL } from "../../utils/wallet";
 import axios from "axios";
 
 const parsed = typeFlag({
@@ -43,7 +42,12 @@ const parsed = typeFlag({
         type: Number,
         default: 0.5,
         alias: "e"
-    }
+    },
+    chainID: {
+        type: Number,
+        default: 15000,
+        alias: "c"
+    },
 })
 
 const inputFilePath = 'genWallet.json';
@@ -58,6 +62,8 @@ async function main() {
     const loValue = parsed.flags.loValue
     const hiValue = parsed.flags.hiValue
     const addrList = parsed.flags.addrList
+    const etxRatio = parsed.flags.etxRatio
+    const chainID = parsed.flags.chainID
 
     logArgs(from, interval, total, loValue, hiValue, addrList)
     
@@ -90,25 +96,27 @@ async function main() {
 
     const slicedShardList = shardList.slice(indexOfShard, indexOfShard + 2);
 
-
     // start time
     const startTime = Date.now();
+    console.log("Starting nonce", nonce, "at", startTime);
+
     for(let i = 0; i < total; i++) {
         const value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
-        // try {
-        //     await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
-        //   } catch (err) {
-        //     if (err instanceof RetryLimitExceededError) {
-        //       console.error("Failed after maximum retries:", err.message);
-        //     } else {
-        //       console.error("Unexpected error:", err);
-        //     }
-        //   }
-
+        if (nonce % 100 == 0) {
+            try {
+                await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
+            } catch (err) {
+                if (err instanceof RetryLimitExceededError) {
+                console.error("Failed after maximum retries:", err.message);
+                } else {
+                console.error("Unexpected error:", err);
+                }
+            }
+        }
 
         let receiveAddr;
-        const sendExternal = Math.random() < parsed.flags.etxRatio;
+        const sendExternal = Math.random() < etxRatio;
         if(sendExternal) {
             // Get random shard from the list of shards
             const randomShard = slicedShardList[Math.floor(Math.random() * slicedShardList.length)];
@@ -120,29 +128,29 @@ async function main() {
             receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
         }
 
-        
+        let type = 0;
+        if (sendExternal) {
+            type = 2;
+        }
+
         const rawTransaction: quais.utils.UnsignedTransaction = {
             to: receiveAddr,
             value: quais.utils.parseEther('0.1'),
-            nonce: 42,
+            nonce: nonce,
             gasLimit: 21000,
             maxFeePerGas: quais.utils.parseUnits('10', 'gwei'),
             maxPriorityFeePerGas: quais.utils.parseUnits('10', 'gwei'),
-            type: 0,
+            type: type,
+            chainId: chainID,
+            externalGasPrice:  quais.utils.parseUnits('20', 'gwei'),
+            externalGasTip:  quais.utils.parseUnits('20', 'gwei'),
         };
-
-        // start time
-        // const startTime = new Date().getTime();
-        const signedTransaction = await signTransactionWithOpenSSL(shardKey.privateKey, rawTransaction);
-        // end time
-        // const endTime = new Date().getTime();
-        // console.log("Time taken to sign transaction: ", endTime - startTime, "ms");
+        
+        const signedTransaction = await walletWithProvider.signTransaction(rawTransaction);
 
         // sendRawTransaction to quai node
-        const tx = await sendRawTransaction(sendNodeData.provider, "0x"+signedTransaction);
+        await sendRawTransaction(sendNodeData.provider, signedTransaction);
     
-        // // sendRawTransaction to quai node
-        // const tx = await provider.sendTransaction("0x"+signedTransaction);
         await sleep(interval);
         nonce++;
     }
@@ -155,7 +163,7 @@ async function main() {
 
 async function sendRawTransaction(url, signedHexValue) {
     try {
-      const response = await axios.post(url, {
+      await axios.post(url, {
         jsonrpc: '2.0',
         method: 'quai_sendRawTransaction',
         params: [signedHexValue],
@@ -165,55 +173,6 @@ async function sendRawTransaction(url, signedHexValue) {
       console.error('Error sending raw transaction:', error.message);
     }
   }
-  
-
-async function sendTx(value: number, toAddress: string, walletWithProvider: any, nonce: number, shardFrom: any) {
-    let txData = {
-        to: toAddress,
-        from: walletWithProvider.address,
-        value: value,
-    } as quais.providers.TransactionRequest;
-
-    const shardTo = getShardFromAddress(toAddress)[0];
-
-    // const feeData = await walletWithProvider.getFeeData() 
-    // console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
-    if(shardFrom != shardTo) {
-        txData = {
-            to: toAddress,
-            from: walletWithProvider.address,
-            value: value,
-            externalGasLimit: 110000,
-            externalGasPrice:  999999743 * 2,
-            externalGasTip:  999999743 * 2,
-            gasLimit: 100000,
-            maxFeePerGas: 999999946,
-            maxPriorityFeePerGas: 999999743,
-            type: 2,
-            nonce: nonce,
-        };
-    }
-
-    try {
-        
-        const tx = await walletWithProvider.sendTransaction(txData);
-        const time = new Date();
-        // console.log("To", shardTo.shard, toAddress);
-        // console.log("Hash", tx.hash);
-        // console.log("Value", value);
-        // console.log(time, "Nonce", nonce, "Hash", tx.hash);
-        // console.log("");
-        // console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
-        
-        if(aggBalances[toAddress] == undefined) {
-            aggBalances[toAddress] = 0;
-        }
-        aggBalances[toAddress] += Number(value);
-        } catch (e: any) {
-            // console.log(e.reason);
-        }
-        
-}
 
 function sleep(s: number) {
     return new Promise(resolve => setTimeout(resolve, s));
