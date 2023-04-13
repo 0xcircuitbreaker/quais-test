@@ -137,7 +137,7 @@ async function main() {
 
         const rawTransaction: quais.utils.UnsignedTransaction = {
             to: receiveAddr,
-            value: quais.utils.parseEther('0.1'),
+            value: value,
             nonce: nonce,
             gasLimit: 21000,
             maxFeePerGas: quais.utils.parseUnits('10', 'gwei'),
