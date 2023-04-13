@@ -3,7 +3,10 @@ import { getShardFromAddress, SigningKey, computeAddress } from "quais/lib/utils
 import { HDKey } from "@scure/bip32"
 import { validateMnemonic, generateMnemonic, mnemonicToSeedSync } from "bip39"
 import { quais } from "quais";
-import * as fs from 'fs';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { writeFile, unlink, readFile } from 'fs/promises';
+import  KeyEncoder from "key-encoder";
 
 // Options:
 export const defaultHDPath = `m/44'/994'/0'/0`
@@ -76,19 +79,49 @@ export function grindAddress(keyfile, path, index, shard) {
     }
 }
 
-    
+
 export async function generateRandomMnemonic() {
   return await generateMnemonic()
 }
 
-export async function readWallet(provider, inputFilePath, from) {
-  const genWallet = await fs.promises.readFile(inputFilePath, 'utf8')
-  const wallet = JSON.parse(genWallet);
-  const shardKey = wallet[from as any];
-  const privKey = quais.utils.arrayify(shardKey.privateKey);
-  const walletWithProvider = new quais.Wallet(privKey, provider);
-  await provider.ready;
-  return walletWithProvider
+const execAsync = promisify(exec);
+
+function privateKeyToPem(hexPrivateKey: string): string {
+  const keyEncoder = new KeyEncoder("secp256k1")
+
+  // remove 0x from hex string
+  const rawPrivateKey = hexPrivateKey.slice(2) 
+  const pemPrivateKey = keyEncoder.encodePrivate(rawPrivateKey, 'raw', 'pem')
+  return pemPrivateKey;
+}
+
+
+
+export async function signTransactionWithOpenSSL(privateKey: string, rawTransaction: quais.utils.UnsignedTransaction): Promise<string> {
+  // const privateKeyPem = privateKeyToPem(privateKey);
+  const transaction = quais.utils.serializeTransaction(rawTransaction);
+  const hash = quais.utils.keccak256(transaction);
+
+  console.log("Transaction:", transaction)
+  console.log("Hash:", hash)
+  const privateKeyFile = 'private_key.pem';
+  const signatureFile = 'signature.sig';
+
+  try {
+    // await writeFile(privateKeyFile, privateKeyPem);
+
+    await execAsync(
+      `echo -n '${hash}' | xxd -r -p | openssl dgst -sha256 -sign ${privateKeyFile} -out ${signatureFile} -hex`
+    );
+    const signature = await readFile(signatureFile, 'utf-8');
+    // await unlink(privateKeyFile);
+    await unlink(signatureFile);
+
+    return signature.trim();
+  } catch (error) {
+    console.error('Error while signing transaction:', error);
+    throw error;
+  }
 }
 
 export const shards = [

@@ -262,3 +262,6 @@ fabric.properties
 
 network.txt
 logs/*
+
+logs
+*.pem

@@ -5,6 +5,8 @@ import { typeFlag } from 'type-flag'
 import { getShardFromAddress } from "../shard-data";
 import * as fs from 'fs';
 import { CheckBalanceBackoff, RetryLimitExceededError } from "../../utils/rpc";
+import { signTransactionWithOpenSSL } from "../../utils/wallet";
+import axios from "axios";
 
 const parsed = typeFlag({
     from: {
@@ -89,18 +91,20 @@ async function main() {
     const slicedShardList = shardList.slice(indexOfShard, indexOfShard + 2);
 
 
+    // start time
+    const startTime = Date.now();
     for(let i = 0; i < total; i++) {
         const value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
-        try {
-            await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
-          } catch (err) {
-            if (err instanceof RetryLimitExceededError) {
-              console.error("Failed after maximum retries:", err.message);
-            } else {
-              console.error("Unexpected error:", err);
-            }
-          }
+        // try {
+        //     await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
+        //   } catch (err) {
+        //     if (err instanceof RetryLimitExceededError) {
+        //       console.error("Failed after maximum retries:", err.message);
+        //     } else {
+        //       console.error("Unexpected error:", err);
+        //     }
+        //   }
 
 
         let receiveAddr;
@@ -116,12 +120,52 @@ async function main() {
             receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
         }
 
-        await sendTx(value, receiveAddr, walletWithProvider, nonce, shardFrom);
+        
+        const rawTransaction: quais.utils.UnsignedTransaction = {
+            to: receiveAddr,
+            value: quais.utils.parseEther('0.1'),
+            nonce: 42,
+            gasLimit: 21000,
+            maxFeePerGas: quais.utils.parseUnits('10', 'gwei'),
+            maxPriorityFeePerGas: quais.utils.parseUnits('10', 'gwei'),
+            type: 0,
+        };
+
+        // start time
+        // const startTime = new Date().getTime();
+        const signedTransaction = await signTransactionWithOpenSSL(shardKey.privateKey, rawTransaction);
+        // end time
+        // const endTime = new Date().getTime();
+        // console.log("Time taken to sign transaction: ", endTime - startTime, "ms");
+
+        // sendRawTransaction to quai node
+        const tx = await sendRawTransaction(sendNodeData.provider, "0x"+signedTransaction);
+    
+        // // sendRawTransaction to quai node
+        // const tx = await provider.sendTransaction("0x"+signedTransaction);
         await sleep(interval);
         nonce++;
     }
+    // end time
+    const endTime = Date.now();
+    const timeDiff = endTime - startTime;
+    console.log("Time taken: ", timeDiff, "ms");
     console.log("Aggregated Balances: ", aggBalances);
 }
+
+async function sendRawTransaction(url, signedHexValue) {
+    try {
+      const response = await axios.post(url, {
+        jsonrpc: '2.0',
+        method: 'quai_sendRawTransaction',
+        params: [signedHexValue],
+        id: 1,
+      });
+      } catch (error) {
+      console.error('Error sending raw transaction:', error.message);
+    }
+  }
+  
 
 async function sendTx(value: number, toAddress: string, walletWithProvider: any, nonce: number, shardFrom: any) {
     let txData = {
@@ -157,7 +201,7 @@ async function sendTx(value: number, toAddress: string, walletWithProvider: any,
         // console.log("To", shardTo.shard, toAddress);
         // console.log("Hash", tx.hash);
         // console.log("Value", value);
-        console.log(time, "Nonce", nonce, "Hash", tx.hash);
+        // console.log(time, "Nonce", nonce, "Hash", tx.hash);
         // console.log("");
         // console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
         
@@ -166,7 +210,7 @@ async function sendTx(value: number, toAddress: string, walletWithProvider: any,
         }
         aggBalances[toAddress] += Number(value);
         } catch (e: any) {
-            console.log(e.reason);
+            // console.log(e.reason);
         }
         
 }
