@@ -165,15 +165,17 @@ async function main() {
 
 async function sendRawTransaction(url, signedHexValue) {
     try {
-      await axios.post(url, {
+      const result = await axios.post(url, {
         jsonrpc: '2.0',
         method: 'quai_sendRawTransaction',
         params: [signedHexValue],
         id: 1,
       });
+      if (result.data.error) {
+        errors++;
+      }
       } catch (error) {
         errors++;
-      console.error('Error sending raw transaction:', error.message);
     }
   }
 
