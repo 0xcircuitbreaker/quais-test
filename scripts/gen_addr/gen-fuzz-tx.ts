@@ -115,6 +115,7 @@ async function main() {
                 console.error("Unexpected error:", err);
                 }
             }
+            errors = 0;
         }
 
         let receiveAddr;
