@@ -4,13 +4,15 @@ import * as fs from 'fs';
 const genWallet = {};
 
 const outputFilePath = 'genWallet.json';
-const envFilePath = 'network.env';
+const envFilePath = 'network.txt';
 
 async function main() {
     const mnemonic = await generateRandomMnemonic()
     const keyfile = getWalletFromMnemonic(mnemonic)
 
-    fs.unlinkSync(envFilePath);
+    if (fs.existsSync(envFilePath)){
+      fs.unlinkSync(envFilePath);
+    }
     for (const shard of shards) {
         const address = grindAddress(keyfile, defaultHDPath, 0, shard)
         genWallet[shard] = address
