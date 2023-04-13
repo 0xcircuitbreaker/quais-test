@@ -53,6 +53,7 @@ const parsed = typeFlag({
 const inputFilePath = 'genWallet.json';
 
 const aggBalances: { [key: string]: number } = {};
+let errors = 0;
 
 async function main() {
     
@@ -104,6 +105,7 @@ async function main() {
         const value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
         if (nonce % 100 == 0) {
+            console.log("Nonce", nonce, "elapsed", Date.now() - startTime, "total errors", errors);
             try {
                 await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
             } catch (err) {
@@ -170,6 +172,7 @@ async function sendRawTransaction(url, signedHexValue) {
         id: 1,
       });
       } catch (error) {
+        errors++;
       console.error('Error sending raw transaction:', error.message);
     }
   }
