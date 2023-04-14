@@ -5,8 +5,8 @@ import { getShardFromAddress } from "./shard-data";
 
 const address = getFlag("--address,-a", String);
 async function main() {
-
     const shardData = getShardFromAddress(address as string)
+
     const sendNodeData = allNodeData[shardData[0].shard];
 
     const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);

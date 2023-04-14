@@ -97,7 +97,7 @@ async function main() {
     console.log("Sending Address: ", walletWithProvider.address)
 
     let nonce = await provider.getTransactionCount(walletWithProvider.address);
-    let feeData = await walletWithProvider.getFeeData();
+    const feeData = await walletWithProvider.getFeeData();
 
     const shardFrom = getShardFromAddress(walletWithProvider.address)[0];
     const indexOfShard = shardList.indexOf(shardFrom.shard);
@@ -116,7 +116,7 @@ async function main() {
             console.log("Nonce", nonce, "elapsed", Date.now() - startTime, "total errors", errors);
             try {
                 await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
-                feeData = await walletWithProvider.getFeeData();
+                // feeData = await walletWithProvider.getFeeData();
                 nonce = await provider.getTransactionCount(walletWithProvider.address);
             } catch (err) {
                 if (err instanceof RetryLimitExceededError) {
