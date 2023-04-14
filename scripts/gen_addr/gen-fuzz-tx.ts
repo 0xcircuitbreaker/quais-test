@@ -48,6 +48,11 @@ const parsed = typeFlag({
         default: 15000,
         alias: "c"
     },
+    destination: {
+        type: String,
+        default: null,
+        alias: "d"
+     }
 })
 
 const inputFilePath = 'genWallet.json';
@@ -65,6 +70,7 @@ async function main() {
     const addrList = parsed.flags.addrList
     const etxRatio = parsed.flags.etxRatio
     const chainID = parsed.flags.chainID
+    const destination = parsed.flags.destination
 
     logArgs(from, interval, total, loValue, hiValue, addrList)
     
@@ -119,23 +125,31 @@ async function main() {
         }
 
         let receiveAddr;
-        const sendExternal = Math.random() < etxRatio;
-        if(sendExternal) {
-            // Get random shard from the list of shards
-            const randomShard = slicedShardList[Math.floor(Math.random() * slicedShardList.length)];
-            const shardAddr = addressList2[randomShard];
+        let sendExternal = false;
 
+        // If we have a destination, send to an address in that destination
+        if (destination) {
+            const shardAddr = addressList2[destination];
             receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
+            if (shardFrom.shard != destination) {
+                sendExternal = true;
+            }
         } else {
-            const shardAddr = addressList2[shardFrom.shard];
-            receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
-        }
+            // If we don't have a destination, send to an address in a random shard
+            // depending on the etxRatio
+            sendExternal = Math.random() < etxRatio;
+            if(sendExternal) {
+                // Get random shard from the list of shards
+                const randomShard = slicedShardList[Math.floor(Math.random() * slicedShardList.length)];
+                const shardAddr = addressList2[randomShard];
 
-        let type = 0;
-        if (sendExternal) {
-            type = 2;
+                receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
+            } else {
+                const shardAddr = addressList2[shardFrom.shard];
+                receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
+            }
         }
-
+    
         // const feeData = await walletWithProvider.getFeeData() 
         // console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
 
@@ -165,7 +179,6 @@ async function main() {
         // // sendRawTransaction to quai node
         // await sendRawTransaction(sendNodeData.provider, signedTransaction);
         const feeData = await walletWithProvider.getFeeData() 
-        console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
 
         const txData = {
             to: receiveAddr,
@@ -187,7 +200,6 @@ async function main() {
 
     try {
         const tx = await walletWithProvider.sendTransaction(txData);
-        console.log("Transaction sent", tx)
         if(aggBalances[receiveAddr] == undefined) {
             aggBalances[receiveAddr] = 0;
         }
