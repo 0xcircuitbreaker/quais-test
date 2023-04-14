@@ -97,6 +97,7 @@ async function main() {
     console.log("Sending Address: ", walletWithProvider.address)
 
     let nonce = await provider.getTransactionCount(walletWithProvider.address);
+    let feeData = await walletWithProvider.getFeeData();
 
     const shardFrom = getShardFromAddress(walletWithProvider.address)[0];
     const indexOfShard = shardList.indexOf(shardFrom.shard);
@@ -115,6 +116,8 @@ async function main() {
             console.log("Nonce", nonce, "elapsed", Date.now() - startTime, "total errors", errors);
             try {
                 await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
+                feeData = await walletWithProvider.getFeeData();
+                nonce = await provider.getTransactionCount(walletWithProvider.address);
             } catch (err) {
                 if (err instanceof RetryLimitExceededError) {
                 console.error("Failed after maximum retries:", err.message);
@@ -150,64 +153,29 @@ async function main() {
             }
         }
     
-        // const feeData = await walletWithProvider.getFeeData() 
-        // console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
 
-        // console.log("quais.utils.parseUnits('1000', 'gwei')", quais.utils.parseUnits('1000', 'gwei'))
-        // console.log("ChainID", chainID, "Nonce", nonce, "Value", value, "Type", type, "From", walletWithProvider.address, "To", receiveAddr)
-        // const rawTransaction: quais.utils.UnsignedTransaction = {
-        //     to: receiveAddr,
-        //     value: value,
-        //     nonce: nonce,
-        //     gasLimit: 21000,
-        //     maxFeePerGas: quais.utils.parseUnits('1000', 'gwei'),
-        //     maxPriorityFeePerGas: quais.utils.parseUnits('1', 'gwei'),
-        //     type: type,
-        //     chainId: chainID,
-        // };
-
-        // if (sendExternal) {
-        //     rawTransaction.externalGasLimit = quais.BigNumber.from(100000);
-        //     rawTransaction.externalGasPrice = quais.utils.parseUnits('1000', 'gwei');
-        //     rawTransaction.externalGasTip = quais.utils.parseUnits('1000', 'gwei');
-        // }
-        
-        // console.log("Is External", sendExternal, type)
-        // console.log(rawTransaction)
-        // const signedTransaction = await walletWithProvider.signTransaction(rawTransaction);
-
-        // // sendRawTransaction to quai node
-        // await sendRawTransaction(sendNodeData.provider, signedTransaction);
-        const feeData = await walletWithProvider.getFeeData() 
-
-        const txData = {
+        const rawTransaction: quais.utils.UnsignedTransaction = {
             to: receiveAddr,
-            from: walletWithProvider.address,
             value: value,
-            gasLimit: 21000,
+            nonce: nonce,
+            gasLimit: 42000,
             maxFeePerGas: Number(feeData.maxFeePerGas),
             maxPriorityFeePerGas: Number(feeData.maxPriorityFeePerGas),
-            nonce: nonce,
-        } as quais.providers.TransactionRequest;
- 
-        if(sendExternal) {
-            txData.externalGasLimit = 110000;
-            txData.gasLimit = 110000;
-            txData.externalGasPrice =  Number(feeData.maxFeePerGas) * 2;
-            txData.externalGasTip =  Number(feeData.maxPriorityFeePerGas) * 2;
-            txData.type = 2;
+            type: 0,
+            chainId: chainID,
+        };
+
+        if (sendExternal) {
+            rawTransaction.externalGasLimit = quais.BigNumber.from(100000);
+            rawTransaction.externalGasPrice =  quais.BigNumber.from(Number(feeData.maxFeePerGas) * 2);
+            rawTransaction.externalGasTip =  quais.BigNumber.from(Number(feeData.maxPriorityFeePerGas) * 2);
+            rawTransaction.type = 2;
         }
 
-    try {
-        const tx = await walletWithProvider.sendTransaction(txData);
-        if(aggBalances[receiveAddr] == undefined) {
-            aggBalances[receiveAddr] = 0;
-        }
-        aggBalances[receiveAddr] += Number(value);
-        } catch (e: any) {
-            console.log(e.reason);
-        }
+        const signedTransaction = await walletWithProvider.signTransaction(rawTransaction);
 
+        // sendRawTransaction to quai node
+        await sendRawTransaction(sendNodeData.provider, signedTransaction, value, receiveAddr);
         await sleep(interval);
         nonce++;
     }
@@ -218,7 +186,7 @@ async function main() {
     console.log("Aggregated Balances: ", aggBalances);
 }
 
-async function sendRawTransaction(url, signedHexValue) {
+async function sendRawTransaction(url, signedHexValue, value, receiveAddr) {
     try {
       const result = await axios.post(url, {
         jsonrpc: '2.0',
@@ -226,9 +194,14 @@ async function sendRawTransaction(url, signedHexValue) {
         params: [signedHexValue],
         id: 1,
       });
-      if (result.data.error) {
-        errors++;
-      }
+        if (result.data.error) {
+            errors++;
+        } else {
+            if(aggBalances[receiveAddr] == undefined) {
+                aggBalances[receiveAddr] = 0;
+            }
+            aggBalances[receiveAddr] += Number(value);
+        }
       } catch (error) {
         errors++;
     }
