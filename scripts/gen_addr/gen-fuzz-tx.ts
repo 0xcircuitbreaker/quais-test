@@ -94,8 +94,9 @@ async function main() {
 
     const shardFrom = getShardFromAddress(walletWithProvider.address)[0];
     const indexOfShard = shardList.indexOf(shardFrom.shard);
+    // Remove indexOfShard from the list
+    const slicedShardList = shardList.slice(0, indexOfShard).concat(shardList.slice(indexOfShard + 1, shardList.length));
 
-    const slicedShardList = shardList.slice(indexOfShard, indexOfShard + 2);
 
     // start time
     const startTime = Date.now();
@@ -115,7 +116,6 @@ async function main() {
                 console.error("Unexpected error:", err);
                 }
             }
-            errors = 0;
         }
 
         let receiveAddr;
@@ -136,24 +136,66 @@ async function main() {
             type = 2;
         }
 
-        const rawTransaction: quais.utils.UnsignedTransaction = {
-            to: receiveAddr,
-            value: value,
-            nonce: nonce,
-            gasLimit: 21000,
-            maxFeePerGas: quais.utils.parseUnits('10', 'gwei'),
-            maxPriorityFeePerGas: quais.utils.parseUnits('10', 'gwei'),
-            type: type,
-            chainId: chainID,
-            externalGasPrice:  quais.utils.parseUnits('20', 'gwei'),
-            externalGasTip:  quais.utils.parseUnits('20', 'gwei'),
-        };
-        
-        const signedTransaction = await walletWithProvider.signTransaction(rawTransaction);
+        // const feeData = await walletWithProvider.getFeeData() 
+        // console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
 
-        // sendRawTransaction to quai node
-        await sendRawTransaction(sendNodeData.provider, signedTransaction);
-    
+        // console.log("quais.utils.parseUnits('1000', 'gwei')", quais.utils.parseUnits('1000', 'gwei'))
+        // console.log("ChainID", chainID, "Nonce", nonce, "Value", value, "Type", type, "From", walletWithProvider.address, "To", receiveAddr)
+        // const rawTransaction: quais.utils.UnsignedTransaction = {
+        //     to: receiveAddr,
+        //     value: value,
+        //     nonce: nonce,
+        //     gasLimit: 21000,
+        //     maxFeePerGas: quais.utils.parseUnits('1000', 'gwei'),
+        //     maxPriorityFeePerGas: quais.utils.parseUnits('1', 'gwei'),
+        //     type: type,
+        //     chainId: chainID,
+        // };
+
+        // if (sendExternal) {
+        //     rawTransaction.externalGasLimit = quais.BigNumber.from(100000);
+        //     rawTransaction.externalGasPrice = quais.utils.parseUnits('1000', 'gwei');
+        //     rawTransaction.externalGasTip = quais.utils.parseUnits('1000', 'gwei');
+        // }
+        
+        // console.log("Is External", sendExternal, type)
+        // console.log(rawTransaction)
+        // const signedTransaction = await walletWithProvider.signTransaction(rawTransaction);
+
+        // // sendRawTransaction to quai node
+        // await sendRawTransaction(sendNodeData.provider, signedTransaction);
+        const feeData = await walletWithProvider.getFeeData() 
+        console.log("Fee Data: ", Number(feeData.maxFeePerGas), Number(feeData.maxPriorityFeePerGas))
+
+        const txData = {
+            to: receiveAddr,
+            from: walletWithProvider.address,
+            value: value,
+            gasLimit: 21000,
+            maxFeePerGas: Number(feeData.maxFeePerGas),
+            maxPriorityFeePerGas: Number(feeData.maxPriorityFeePerGas),
+            nonce: nonce,
+        } as quais.providers.TransactionRequest;
+ 
+        if(sendExternal) {
+            txData.externalGasLimit = 110000;
+            txData.gasLimit = 110000;
+            txData.externalGasPrice =  Number(feeData.maxFeePerGas) * 2;
+            txData.externalGasTip =  Number(feeData.maxPriorityFeePerGas) * 2;
+            txData.type = 2;
+        }
+
+    try {
+        const tx = await walletWithProvider.sendTransaction(txData);
+        console.log("Transaction sent", tx)
+        if(aggBalances[receiveAddr] == undefined) {
+            aggBalances[receiveAddr] = 0;
+        }
+        aggBalances[receiveAddr] += Number(value);
+        } catch (e: any) {
+            console.log(e.reason);
+        }
+
         await sleep(interval);
         nonce++;
     }
