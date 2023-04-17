@@ -96,7 +96,7 @@ async function main() {
 
     console.log("Sending Address: ", walletWithProvider.address)
 
-    let nonce = await provider.getTransactionCount(walletWithProvider.address);
+    let nonce = await provider.getTransactionCount(walletWithProvider.address, "pending");
     let feeData = await walletWithProvider.getFeeData();
 
     const shardFrom = getShardFromAddress(walletWithProvider.address)[0];
@@ -112,12 +112,12 @@ async function main() {
     for(let i = 0; i < total; i++) {
         const value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
-        if (nonce % 100 == 0) {
+        if (nonce % 2000 == 0) {
             console.log("Nonce", nonce, "elapsed", Date.now() - startTime, "total errors", errors);
             try {
                 await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
                 feeData = await walletWithProvider.getFeeData();
-                // nonce = await provider.getTransactionCount(walletWithProvider.address);
+                nonce = await provider.getTransactionCount(walletWithProvider.address, "pending");
             } catch (err) {
                 if (err instanceof RetryLimitExceededError) {
                 console.error("Failed after maximum retries:", err.message);
