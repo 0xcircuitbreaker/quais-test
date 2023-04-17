@@ -88,3 +88,35 @@ export const QUAI_CONTEXTS = [
     })
   }
   
+  export function getRandomAddressInShard(shard: string) {
+    const shardData = QUAI_CONTEXTS.filter((obj) => obj.shard === shard)
+    const start = Number("0x" + shardData[0].byte[0])
+    const end = Number("0x" + shardData[0].byte[1])
+    let prefix =  Math.floor(Math.random() * (end - start + 1) + start).toString(16)
+    // if prefix is only 1 character, add a 0 to the front
+    if (prefix.length === 1) {
+      prefix = "0" + prefix
+    }
+    let randomAddress = generateRandomAddress()
+    // replace first 4 characters with random number between start and end
+    randomAddress = randomAddress.replace(
+      randomAddress.substring(2, 4),
+      prefix
+    )
+    return randomAddress
+  }
+
+
+  // Generate a random Ethereum address
+function generateRandomAddress() {
+  const hexChars = '0123456789abcdef';
+  let address = '0x';
+
+  // Generate 40 random hexadecimal characters
+  for (let i = 0; i < 40; i++) {
+    const randomIndex = Math.floor(Math.random() * 16);
+    address += hexChars[randomIndex];
+  }
+
+  return address;
+}

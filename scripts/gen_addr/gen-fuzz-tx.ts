@@ -2,7 +2,7 @@ import { quais } from "quais";
 import { allNodeData } from "../node-data";
 import { addressList2, shardList } from "../address-list";
 import { typeFlag } from 'type-flag'
-import { getShardFromAddress } from "../shard-data";
+import { getShardFromAddress, getRandomAddressInShard } from "../shard-data";
 import * as fs from 'fs';
 import { CheckBalanceBackoff, RetryLimitExceededError } from "../../utils/rpc";
 import axios from "axios";
@@ -52,6 +52,11 @@ const parsed = typeFlag({
         type: String,
         default: null,
         alias: "d"
+     },
+     random: {
+        type: Boolean,
+        default: false,
+        alias: "r"
      }
 })
 
@@ -71,6 +76,7 @@ async function main() {
     const etxRatio = parsed.flags.etxRatio
     const chainID = parsed.flags.chainID
     const destination = parsed.flags.destination
+    const random = parsed.flags.random
 
     logArgs(from, interval, total, loValue, hiValue, addrList)
     
@@ -137,9 +143,22 @@ async function main() {
             if (shardFrom.shard != destination) {
                 sendExternal = true;
             }
+        } else if (random) {
+            // If we don't have a destination and are sending to a random address,
+            // calculate the from ratio and send to an address in a random shard depending on the etxRatio.
+            sendExternal = Math.random() < etxRatio;
+            if(sendExternal) {
+                // Get random shard from the list of shards
+                const randomShard = slicedShardList[Math.floor(Math.random() * slicedShardList.length)];
+                receiveAddr = getRandomAddressInShard(randomShard);
+            } else {
+                receiveAddr = getRandomAddressInShard(shardFrom.shard);
+            }
+
+            console.log("Sending to", receiveAddr)
         } else {
-            // If we don't have a destination, send to an address in a random shard
-            // depending on the etxRatio
+            // If we don't have a destination and we aren't sending to a random address, 
+            // send to an address in a random shard depending on the etxRatio
             sendExternal = Math.random() < etxRatio;
             if(sendExternal) {
                 // Get random shard from the list of shards
