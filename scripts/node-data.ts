@@ -8,22 +8,22 @@ export interface AllNodeData {
 }
 
 export const allNodeData: AllNodeData = {
-    prime: {
-      url: "http://localhost:8546",
-      provider: "http://localhost:8546",
-    },
-    "region-0": {
-      url: "http://localhost:8578",
-      provider: "http://localhost:8578",
-    },
-    "region-1": {
-      url: "http://localhost:8580",
-      provider: "http://localhost:8580",
-    },
-    "region-2": {
-      url: "http://localhost:8582",
-      provider: "http://localhost:8582",
-    },
+    // prime: {
+    //   url: "http://localhost:8546",
+    //   provider: "http://localhost:8546",
+    // },
+    // "region-0": {
+    //   url: "http://localhost:8578",
+    //   provider: "http://localhost:8578",
+    // },
+    // "region-1": {
+    //   url: "http://localhost:8580",
+    //   provider: "http://localhost:8580",
+    // },
+    // "region-2": {
+    //   url: "http://localhost:8582",
+    //   provider: "http://localhost:8582",
+    // },
     "zone-0-0": {
       url: "http://localhost:8610",
       provider: "http://localhost:8610",

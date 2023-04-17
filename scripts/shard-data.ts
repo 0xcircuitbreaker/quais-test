@@ -1,16 +1,16 @@
 export const QUAI_CONTEXTS = [
-    {
-      name: "Prime",
-      shard: "prime",
-      context: 0,
-      byte: ["00", "09"]
-    },
-    {
-      name: "Cyprus",
-      shard: "region-0",
-      context: 1,
-      byte: ["0a", "13"]
-    },
+    // {
+    //   name: "Prime",
+    //   shard: "prime",
+    //   context: 0,
+    //   byte: ["00", "09"]
+    // },
+    // {
+    //   name: "Cyprus",
+    //   shard: "region-0",
+    //   context: 1,
+    //   byte: ["0a", "13"]
+    // },
     {
       name: "Cyprus One",
       shard: "zone-0-0",
@@ -29,12 +29,12 @@ export const QUAI_CONTEXTS = [
       context: 2,
       byte: ["28", "31"]
     },
-    {
-      name: "Paxos",
-      shard: "region-1",
-      context: 1,
-      byte: ["32", "3b"]
-    },
+    // {
+    //   name: "Paxos",
+    //   shard: "region-1",
+    //   context: 1,
+    //   byte: ["32", "3b"]
+    // },
     {
       name: "Paxos One",
       shard: "zone-1-0",
@@ -53,12 +53,12 @@ export const QUAI_CONTEXTS = [
       context: 2,
       byte: ["50", "59"]
     },
-    {
-      name: "Hydra",
-      shard: "region-2",
-      context: 1,
-      byte: ["5a", "63"]
-    },
+    // {
+    //   name: "Hydra",
+    //   shard: "region-2",
+    //   context: 1,
+    //   byte: ["5a", "63"]
+    // },
     {
       name: "Hydra One",
       shard: "zone-2-0",
