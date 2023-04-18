@@ -9,7 +9,7 @@ async function main() {
 
     const sendNodeData = allNodeData[shardData[0].shard];
 
-    const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
+    const provider = new quais.JsonRpcProvider(sendNodeData.provider);
     await provider.ready;
 
     const balanace = await provider.getBalance(address as string);

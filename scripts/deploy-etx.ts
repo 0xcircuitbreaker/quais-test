@@ -1,7 +1,6 @@
 //load 'quais' and 'fs'
 import { quais } from "quais";
 import { allNodeData } from "./node-data";
-import { readWallet } from "../utils/wallet";
 import * as fs from 'fs';
 
 //Ussing async-await for deploy method
@@ -22,15 +21,24 @@ async function main() {
     const abi = JSON.parse(fs.readFileSync('contracts/ETX.abi').toString());
     
     //to create 'signer' object;here 'account'
-    const provider = new quais.providers.JsonRpcProvider(sendAddrData.provider);
+    const provider = new quais.JsonRpcProvider(sendAddrData.provider);
     const walletWithProvider = await readWallet(provider, "genWallet.json", from)
     const myContract = new quais.ContractFactory(abi, bytecode, walletWithProvider);
     
     // If your contract requires constructor args, you can specify them here
     const contract = await myContract.deploy({gasLimit: 99999});
     
-    console.log(contract.address);
-    console.log(contract.deployTransaction);
+    console.log(contract);
 }
     
+
+export async function readWallet(provider, inputFilePath = "genWallet.json", from) {
+    const genWallet = await fs.promises.readFile(inputFilePath, 'utf8')
+    const wallet = JSON.parse(genWallet);
+    const shardKey = wallet[from as any];
+    // const privKey = quais.getBytes(shardKey.privateKey);
+    const walletWithProvider = new quais.Wallet(shardKey.privateKey, provider);
+    return walletWithProvider
+  }
+
 main();

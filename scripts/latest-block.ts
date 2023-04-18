@@ -12,7 +12,7 @@ import { NodeData, allNodeData } from "./node-data";
     return;
   }
 
-  const provider = new quais.providers.JsonRpcProvider(data.provider);
+  const provider = new quais.JsonRpcProvider(data.provider);
   await provider.ready;
 
   const block = await provider.getBlock("latest");

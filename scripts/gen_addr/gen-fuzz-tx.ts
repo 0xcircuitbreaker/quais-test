@@ -88,22 +88,22 @@ async function main() {
 
     const sendNodeData = allNodeData[from];
 
-    const provider = new quais.providers.JsonRpcProvider(sendNodeData.provider);
+    const provider = new quais.JsonRpcProvider(sendNodeData.provider);
 
 
     const genWallet = await fs.promises.readFile(inputFilePath, 'utf8')
 
     const wallet = JSON.parse(genWallet);
     const shardKey = wallet[from as any];
-    const privKey = quais.utils.arrayify(shardKey.privateKey);
-    const walletWithProvider = new quais.Wallet(privKey, provider);
+    // const privKey = quais.getBytes(shardKey.privateKey);
+    const walletWithProvider = new quais.Wallet(shardKey.privateKey, provider);
 
     await provider.ready;
 
     console.log("Sending Address: ", walletWithProvider.address)
 
     let nonce = await provider.getTransactionCount(walletWithProvider.address, "pending");
-    let feeData = await walletWithProvider.getFeeData();
+    let feeData = await provider.getFeeData();
 
     const shardFrom = getShardFromAddress(walletWithProvider.address)[0];
     const indexOfShard = shardList.indexOf(shardFrom.shard);
@@ -122,7 +122,7 @@ async function main() {
             console.log("Nonce", nonce, "elapsed", Date.now() - startTime, "total errors", errors);
             try {
                 await CheckBalanceBackoff(provider, walletWithProvider, value, 100, 1000, 10000);
-                feeData = await walletWithProvider.getFeeData();
+                feeData = await provider.getFeeData();
                 nonce = await provider.getTransactionCount(walletWithProvider.address, "pending");
             } catch (err) {
                 if (err instanceof RetryLimitExceededError) {
@@ -172,22 +172,23 @@ async function main() {
             }
         }
     
-
-        const rawTransaction: quais.utils.UnsignedTransaction = {
+        
+        const rawTransaction = {
             to: receiveAddr,
-            value: value,
+            value: BigInt(value),
             nonce: nonce,
-            gasLimit: 42000,
-            maxFeePerGas: Number(feeData.maxFeePerGas),
-            maxPriorityFeePerGas: Number(feeData.maxPriorityFeePerGas),
+            gasLimit: BigInt(42000),
+            maxFeePerGas: feeData.maxFeePerGas,
+            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
             type: 0,
-            chainId: chainID,
-        };
+            chainId: BigInt(chainID),
+        } as quais.Transaction;
+
 
         if (sendExternal) {
-            rawTransaction.externalGasLimit = quais.BigNumber.from(100000);
-            rawTransaction.externalGasPrice =  quais.BigNumber.from(Number(feeData.maxFeePerGas) * 2);
-            rawTransaction.externalGasTip =  quais.BigNumber.from(Number(feeData.maxPriorityFeePerGas) * 2);
+            rawTransaction.externalGasLimit = BigInt(100000);
+            rawTransaction.externalGasPrice = BigInt(Number(feeData.maxFeePerGas) * 2);
+            rawTransaction.externalGasTip = BigInt(Number(feeData.maxPriorityFeePerGas) * 2);
             rawTransaction.type = 2;
         }
 

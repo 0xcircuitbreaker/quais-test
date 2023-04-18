@@ -9,7 +9,7 @@ export class RetryLimitExceededError extends Error {
     }
   }
   
-export async function CheckBalance (provider: quais.providers.JsonRpcProvider, walletWithProvider: any, value) {
+export async function CheckBalance (provider: quais.JsonRpcProvider, walletWithProvider: any, value) {
     const balanace = await provider.getBalance(walletWithProvider.address);
     if(Number(balanace) < value) {
         console.log("Insufficient balance", "Balance", Number(balanace), "Sending", value);
@@ -17,7 +17,7 @@ export async function CheckBalance (provider: quais.providers.JsonRpcProvider, w
     }
 }
 
-export async function CheckBalanceBackoff (provider: quais.providers.JsonRpcProvider, walletWithProvider: any, value,     maxRetries = 5,
+export async function CheckBalanceBackoff (provider: quais.JsonRpcProvider, walletWithProvider: any, value,     maxRetries = 5,
     initialDelay = 500,
     maxDelay = 16000): Promise<any> {
         let currentRetry = 0;

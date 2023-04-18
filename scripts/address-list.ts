@@ -41,22 +41,22 @@ export const addressList = [
 ]
 
 export const addressList2 = {
-    "prime": [
-        "0x0473D286D06Cc665c690631fAD5da470166D0aF0",
-        "0x099B2b80a6aD7BbAeDC895C9D885134571960Da3",
-    ],
-    "region-0": [
-        "0x1027D27Fa9E4A92D6f7CB74a95941c55374c735E",
-        "0x1035c18Cd84184157176Ae9D85C5Ec186fff1CBC",
-    ],
-    "region-1": [
-        "0x357bFeb6BE99239dF2a7109D1070933d1DCc458f",
-        "0x33616b8f12479660CF5eD403BD3F85936E591895",
-    ],
-    "region-2": [
-        "0x61238b78bFbe36844A40aF18Dde26d032F8bab8D",
-        "0x5eB1792E080e20458fD89C4b580aCee7898159D9",
-    ],
+    // "prime": [
+    //     "0x0473D286D06Cc665c690631fAD5da470166D0aF0",
+    //     "0x099B2b80a6aD7BbAeDC895C9D885134571960Da3",
+    // ],
+    // "region-0": [
+    //     "0x1027D27Fa9E4A92D6f7CB74a95941c55374c735E",
+    //     "0x1035c18Cd84184157176Ae9D85C5Ec186fff1CBC",
+    // ],
+    // "region-1": [
+    //     "0x357bFeb6BE99239dF2a7109D1070933d1DCc458f",
+    //     "0x33616b8f12479660CF5eD403BD3F85936E591895",
+    // ],
+    // "region-2": [
+    //     "0x61238b78bFbe36844A40aF18Dde26d032F8bab8D",
+    //     "0x5eB1792E080e20458fD89C4b580aCee7898159D9",
+    // ],
     "zone-0-0": [
         "0x1B51B5D65eBD8e47036aE57d5a36ac037729700c",
         "0x18241d1abc7245c15e18610775C5034611CB57DF",
@@ -96,10 +96,10 @@ export const addressList2 = {
 }
 
 export const shardList = [
-    "prime",
-    "region-0",
-    "region-1",
-    "region-2",
+    // "prime",
+    // "region-0",
+    // "region-1",
+    // "region-2",
     "zone-0-0",
     "zone-0-1",
     "zone-0-2",

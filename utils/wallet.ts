@@ -1,5 +1,5 @@
 // import * as bip39 from "bip39"
-import { getShardFromAddress, SigningKey, computeAddress } from "quais/lib/utils"
+// import { getShardFromAddress, SigningKey, computeAddress } from "quais/lib/utils"
 import { HDKey } from "@scure/bip32"
 import { validateMnemonic, generateMnemonic, mnemonicToSeedSync } from "bip39"
 import { quais } from "quais";
@@ -7,6 +7,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { writeFile, unlink, readFile } from 'fs/promises';
 import  KeyEncoder from "key-encoder";
+import * as fs from 'fs';
 
 // Options:
 export const defaultHDPath = `m/44'/994'/0'/0`
@@ -49,8 +50,8 @@ function deriveAddress(HDKey, opts)  {
     const index = opts.index || 0
   
     const childKey = HDKey.derive(path + "/" + index.toString())
-    const signingKey = new SigningKey(childKey.privateKey)
-    const address = computeAddress(signingKey.publicKey)
+    const signingKey = new quais.SigningKey(childKey.privateKey)
+    const address = quais.computeAddress(signingKey.publicKey)
     return { address: address, childKey: signingKey.privateKey }
 }
 
@@ -60,7 +61,7 @@ export function grindAddress(keyfile, path, index, shard) {
     let newAddress = {} as AddressAndKey
     while (!found) {
       newAddress = deriveAddress(keyfile, { hdPath: path, index: index })
-      const addrShard = getShardFromAddress(newAddress.address)
+      const addrShard = quais.getShardFromAddress(newAddress.address)
         // Check if address is in a shard
       if (addrShard !== undefined) {
         // Check if address is in correct shard
@@ -79,6 +80,15 @@ export function grindAddress(keyfile, path, index, shard) {
     }
 }
 
+
+export async function readWallet(provider, inputFilePath = "genWallet.json", from) {
+  const genWallet = await fs.promises.readFile(inputFilePath, 'utf8')
+  const wallet = JSON.parse(genWallet);
+  const shardKey = wallet[from as any];
+  // const privKey = quais.getBytes(shardKey.privateKey);
+  const walletWithProvider = new quais.Wallet(shardKey.privateKey, provider);
+  return walletWithProvider
+}
 
 export async function generateRandomMnemonic() {
   return await generateMnemonic()
@@ -99,8 +109,8 @@ function privateKeyToPem(hexPrivateKey: string): string {
 
 export async function signTransactionWithOpenSSL(privateKey: string, rawTransaction: quais.utils.UnsignedTransaction): Promise<string> {
   // const privateKeyPem = privateKeyToPem(privateKey);
-  const transaction = quais.utils.serializeTransaction(rawTransaction);
-  const hash = quais.utils.keccak256(transaction);
+  const transaction = quais.serializeTransaction(rawTransaction);
+  const hash = quais.keccak256(transaction);
 
   console.log("Transaction:", transaction)
   console.log("Hash:", hash)
