@@ -171,8 +171,7 @@ async function main() {
                 receiveAddr = shardAddr[Math.floor(Math.random() * shardAddr.length)];
             }
         }
-    
-        
+            
         const rawTransaction = {
             to: receiveAddr,
             value: BigInt(value),
