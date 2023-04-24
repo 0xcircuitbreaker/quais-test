@@ -119,8 +119,62 @@ Params:
 
 ### 6. Generate Addresses and Fuzz
 
-`ts-node scripts/gen_addr/generate_addresses.ts`
-This will output a genWallet.json that can be imported by `scripts/gen_addr/gen-fuzz-tx.ts` the `gen-fuzz-tx.ts` takes the same params as `fuzz-tx-many-dest.ts`
-`generate_addresses.ts` also outputs a `network.env` that can be imported into your `go-quai` network.env
-Params: `-f <from> -i <interval> -t <total> -l <lo val> -h <hi val> -r <random>`
+`ts-node scripts/gen_addr/generate-addresses.ts`
+This will output a genWallet.json that can be imported by `scripts/gen_addr/gen-fuzz-tx.ts`.
+`generate-addresses.ts` also outputs a `network.env` that can be imported into your `go-quai` network.env
+Params:
+
+```
+    from: {
+        type: String,
+        default: "zone-0-0",
+        alias: "f"
+    },
+    interval: {
+        type: Number,
+        default: 1000,
+        alias: "i"
+    },
+    total: {
+        type: Number,
+        default: 10,
+        alias: "t"
+    },
+    loValue: {
+        type: Number,
+        default: 1,
+        alias: "l"
+    },
+    hiValue: {
+        type: Number,
+        default: 100,
+        alias: "h"
+    },
+    addrList: {
+        type: Boolean,
+        default: false,
+        alias: "a"
+    },
+    etxRatio: {
+        type: Number,
+        default: 0.5,
+        alias: "e"
+    },
+    chainID: {
+        type: Number,
+        default: 15000,
+        alias: "c"
+    },
+    destination: {
+        type: String,
+        default: null,
+        alias: "d"
+     },
+     random: {
+        type: Boolean,
+        default: false,
+        alias: "r"
+     }
+```
+
 Example: `ts-node scripts/gen_addr/gen-fuzz-tx.ts --f zone-0-1 -i 100 -t 100 -l 50 -h 120`
