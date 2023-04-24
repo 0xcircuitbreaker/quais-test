@@ -1,97 +1,73 @@
 export const QUAI_CONTEXTS = [
-    // {
-    //   name: "Prime",
-    //   shard: "prime",
-    //   context: 0,
-    //   byte: ["00", "09"]
-    // },
-    // {
-    //   name: "Cyprus",
-    //   shard: "region-0",
-    //   context: 1,
-    //   byte: ["0a", "13"]
-    // },
-    {
+  {
       name: "Cyprus One",
       shard: "zone-0-0",
       context: 2,
-      byte: ["14", "1d"]
-    },
-    {
+      byte: ["0x00", "0x1D"]
+  },
+  {
       name: "Cyprus Two",
       shard: "zone-0-1",
       context: 2,
-      byte: ["1e", "27"]
-    },
-    {
+      byte: ["0x1E", "0x3A"]
+  },
+  {
       name: "Cyprus Three",
       shard: "zone-0-2",
       context: 2,
-      byte: ["28", "31"]
-    },
-    // {
-    //   name: "Paxos",
-    //   shard: "region-1",
-    //   context: 1,
-    //   byte: ["32", "3b"]
-    // },
-    {
+      byte: ["0x3B", "0x57"]
+  },
+  {
       name: "Paxos One",
       shard: "zone-1-0",
       context: 2,
-      byte: ["3c", "45"]
-    },
-    {
+      byte: ["0x58", "0x73"]
+  },
+  {
       name: "Paxos Two",
       shard: "zone-1-1",
       context: 2,
-      byte: ["46", "4f"]
-    },
-    {
+      byte: ["0x74", "0x8F"]
+  },
+  {
       name: "Paxos Three",
       shard: "zone-1-2",
       context: 2,
-      byte: ["50", "59"]
-    },
-    // {
-    //   name: "Hydra",
-    //   shard: "region-2",
-    //   context: 1,
-    //   byte: ["5a", "63"]
-    // },
-    {
+      byte: ["0x90", "0xAB"]
+  },
+  {
       name: "Hydra One",
       shard: "zone-2-0",
       context: 2,
-      byte: ["64", "6d"]
-    },
-    {
+      byte: ["0xAC", "0xC7"]
+  },
+  {
       name: "Hydra Two",
       shard: "zone-2-1",
       context: 2,
-      byte: ["6e", "77"]
-    },
-    {
+      byte: ["0xC8", "0xE3"]
+  },
+  {
       name: "Hydra Three",
       shard: "zone-2-2",
       context: 2,
-      byte: ["78", "81"]
-    }
-  ]
+      byte: ["0xE4", "0xFF"]
+  }
+];
 
   export function getShardFromAddress(address: string) {
     return QUAI_CONTEXTS.filter((obj) => {
       const num = Number(address.substring(0, 4))
-      const start = Number("0x" + obj.byte[0])
-      const end = Number("0x" + obj.byte[1])
+      const start = Number(obj.byte[0])
+      const end = Number(obj.byte[1])
       return num >= start && num <= end
     })
   }
   
   export function getRandomAddressInShard(shard: string) {
     const shardData = QUAI_CONTEXTS.filter((obj) => obj.shard === shard)
-    const start = Number("0x" + shardData[0].byte[0])
-    const end = Number("0x" + shardData[0].byte[1])
+    const start = Number(shardData[0].byte[0])
+    const end = Number(shardData[0].byte[1])
     let prefix =  Math.floor(Math.random() * (end - start + 1) + start).toString(16)
     // if prefix is only 1 character, add a 0 to the front
     if (prefix.length === 1) {

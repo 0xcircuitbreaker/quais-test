@@ -10,7 +10,7 @@
     "bip39": "^3.1.0",
     "fs": "^0.0.1-security",
     "key-encoder": "^2.0.3",
-    "quais": "file:/Users/alan/code/quais.js-new",
+    "quais": "^0.2.1",
     "type-flag": "^3.0.0"
   },
   "devDependencies": {
