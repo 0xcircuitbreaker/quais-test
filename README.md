@@ -121,7 +121,7 @@ Params:
 
 `ts-node scripts/gen_addr/generate-addresses.ts`
 This will output a genWallet.json that can be imported by `scripts/gen_addr/gen-fuzz-tx.ts`.
-`generate-addresses.ts` also outputs a `network.env` that can be imported into your `go-quai` network.env
+`generate-addresses.ts` also outputs a `network.txt` that can be imported into your `go-quai` network.env
 Params:
 
 ```
