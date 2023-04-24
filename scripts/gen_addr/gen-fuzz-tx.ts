@@ -57,7 +57,17 @@ const parsed = typeFlag({
         type: Boolean,
         default: false,
         alias: "r"
-     }
+    },
+    increaseIntervalDelay: {
+        type: Number,
+        default: 0,
+        alias: "I"
+    },
+    intervalArray: {
+        type: [Number],
+        default: null,
+        alias: "A"
+    }
 })
 
 const inputFilePath = 'genWallet.json';
@@ -68,7 +78,7 @@ let errors = 0;
 async function main() {
     
     const from = parsed.flags.from
-    const interval = parsed.flags.interval
+    let interval = parsed.flags.interval
     const total = parsed.flags.total
     const loValue = parsed.flags.loValue
     const hiValue = parsed.flags.hiValue
@@ -77,6 +87,8 @@ async function main() {
     const chainID = parsed.flags.chainID
     const destination = parsed.flags.destination
     const random = parsed.flags.random
+    const increaseIntervalDelay = parsed.flags.increaseIntervalDelay
+    const intervalArray = parsed.flags.intervalArray
 
     logArgs(from, interval, total, loValue, hiValue, addrList)
     
@@ -115,7 +127,20 @@ async function main() {
     const startTime = Date.now();
     console.log("Starting nonce", nonce, "at", startTime);
 
-    for(let i = 0; i < total; i++) {
+    let intervalIndex = 0;
+    interval = intervalArray[intervalIndex];
+    intervalIndex++;
+    for (let i = 0; i < total; i++) {
+
+        if (increaseIntervalDelay > 0) {
+            if (intervalArray.length == intervalIndex) {
+                console.log("Reached end of interval array, no more increasing interval delay")
+            } else if (Date.now() - startTime > increaseIntervalDelay) {
+                interval = intervalArray[intervalIndex];
+                intervalIndex++;
+            }
+        }
+
         const value = Math.floor(Math.random() * (hiValue - loValue + 1) + loValue);
 
         if (nonce % 2000 == 0) {

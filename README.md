@@ -174,7 +174,17 @@ Params:
         type: Boolean,
         default: false,
         alias: "r"
-     }
+    },
+    increaseIntervalDelay: {
+        type: Number,
+        default: 0,
+        alias: "I"
+    },
+    intervalArray: {
+        type: [Number],
+        default: null,
+        alias: "A"
+    }
 ```
 
 Example: `ts-node scripts/gen_addr/gen-fuzz-tx.ts --f zone-0-1 -i 100 -t 100 -l 50 -h 120`
