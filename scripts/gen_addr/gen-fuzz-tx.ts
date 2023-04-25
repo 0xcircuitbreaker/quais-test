@@ -110,7 +110,7 @@ async function main() {
     // const privKey = quais.getBytes(shardKey.privateKey);
     const walletWithProvider = new quais.Wallet(shardKey.privateKey, provider);
 
-    await provider.ready;
+    // await provider.ready;
 
     console.log("Sending Address: ", walletWithProvider.address)
 

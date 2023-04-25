@@ -25,7 +25,7 @@ export async function CheckBalanceBackoff (provider: quais.JsonRpcProvider, wall
           
         while (currentRetry <= maxRetries) {
           try {
-            CheckBalance(provider, walletWithProvider, value);
+            await CheckBalance(provider, walletWithProvider, value);
             return;      
           } catch (err) {
             console.log("err: ", err, currentRetry, maxRetries)
