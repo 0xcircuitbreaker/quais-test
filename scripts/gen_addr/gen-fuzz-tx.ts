@@ -130,8 +130,9 @@ async function main() {
     let intervalIndex = 0;
     interval = intervalArray[intervalIndex];
     intervalIndex++;
-    for (let i = 0; i < total; i++) {
+    // for (let i = 0; i < total; i++) {
 
+    while (true) {
         if (increaseIntervalDelay > 0) {
             if (intervalArray.length == intervalIndex) {
                 console.log("Reached end of interval array, no more increasing interval delay")
