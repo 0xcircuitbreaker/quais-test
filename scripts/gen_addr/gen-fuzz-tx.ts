@@ -4,7 +4,7 @@ import { addressList2, shardList } from "../address-list";
 import { typeFlag } from 'type-flag'
 import { getShardFromAddress, getRandomAddressInShard } from "../shard-data";
 import * as fs from 'fs';
-import { CheckBalanceBackoff, RetryLimitExceededError } from "../../utils/rpc";
+import { CheckBalanceBackoff, CheckMempoolBackoff, RetryLimitExceededError } from "../../utils/rpc";
 import axios from "axios";
 
 const parsed = typeFlag({
@@ -65,8 +65,13 @@ const parsed = typeFlag({
     },
     intervalArray: {
         type: [Number],
-        default: null,
+        default: [0],
         alias: "A"
+    },
+    memPoolSize: {
+        type: Number,
+        default: 15000,
+        alias: "m"
     }
 })
 
@@ -89,6 +94,7 @@ async function main() {
     const random = parsed.flags.random
     const increaseIntervalDelay = parsed.flags.increaseIntervalDelay
     const intervalArray = parsed.flags.intervalArray
+    const mempoolSize = parsed.flags.memPoolSize
 
     logArgs(from, interval, total, loValue, hiValue, addrList)
     
@@ -137,6 +143,7 @@ async function main() {
             if (intervalArray.length == intervalIndex) {
                 console.log("Reached end of interval array, no more increasing interval delay")
             } else if (Date.now() - startTime > increaseIntervalDelay) {
+                console.log("Changing interval delay to", intervalArray[intervalIndex], "ms")
                 interval = intervalArray[intervalIndex];
                 intervalIndex++;
             }
@@ -159,6 +166,11 @@ async function main() {
             }
         }
 
+        if (nonce % mempoolSize == 0) {
+            await CheckMempoolBackoff(sendNodeData.provider, mempoolSize)
+        }
+
+
         let receiveAddr;
         let sendExternal = false;
 
@@ -180,8 +192,6 @@ async function main() {
             } else {
                 receiveAddr = getRandomAddressInShard(shardFrom.shard);
             }
-
-            console.log("Sending to", receiveAddr)
         } else {
             // If we don't have a destination and we aren't sending to a random address, 
             // send to an address in a random shard depending on the etxRatio
@@ -240,6 +250,7 @@ async function sendRawTransaction(url, signedHexValue, value, receiveAddr) {
         id: 1,
       });
         if (result.data.error) {
+            console.log("Error: ", result.data.error.message);
             errors++;
         } else {
             if(aggBalances[receiveAddr] == undefined) {
