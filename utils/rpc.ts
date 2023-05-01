@@ -53,6 +53,11 @@ export async function CheckBalanceBackoff(
   }
 }
 
+class MempoolStatus {
+  pending: number;
+  queued: number;
+}
+
 export async function CheckMempoolBackoff(
   url,
   memPoolSize,
@@ -65,15 +70,17 @@ export async function CheckMempoolBackoff(
 
   while (currentRetry <= maxRetries) {
     try {
-      const txPending = await lookupTxPending(url);
+      const txStatus = await lookupTxPending(url) as MempoolStatus;
       console.log(
         "Checking mempool size",
         "pending:",
-        txPending,
+        txStatus.pending,
         "mempoolSize:",
+        "queued:",
+        txStatus.queued,
         memPoolSize
       );
-      if (txPending > memPoolSize) {
+      if (txStatus.pending > memPoolSize || txStatus.queued) {
         throw Error("Mempool size exceeded");
       }
       console.log("Mempool size acceptable, continue sending");
@@ -100,8 +107,9 @@ async function lookupTxPending(url) {
       console.log("Error: ", result.data.error.message);
       return 0;
     }
-    const res = result.data.result.pending;
-    return Number(res);
+    const resPend = result.data.result.pending;
+    const resQueued = result.data.result.queued;
+    return { pending: Number(resPend), queued: Number(resQueued) };
   } catch (error) {
     console.log("Error: ", error);
     return 0;
