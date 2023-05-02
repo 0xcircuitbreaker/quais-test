@@ -80,7 +80,7 @@ export async function CheckMempoolBackoff(
         txStatus.queued,
         memPoolSize
       );
-      if (txStatus.pending > memPoolSize || txStatus.queued) {
+      if (txStatus.pending > memPoolSize || txStatus.queued > memPoolSize) {
         throw Error("Mempool size exceeded");
       }
       console.log("Mempool size acceptable, continue sending");
