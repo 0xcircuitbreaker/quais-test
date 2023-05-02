@@ -247,7 +247,7 @@ async function main() {
       value: BigInt(value),
       nonce: nonce,
       gasLimit: BigInt(42000),
-      maxFeePerGas: feeData.maxFeePerGas,
+      maxFeePerGas: BigInt(Number(feeData.maxFeePerGas) * 2),
       maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
       type: 0,
       chainId: BigInt(chainID),
