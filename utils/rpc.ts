@@ -75,9 +75,9 @@ export async function CheckMempoolBackoff(
         "Checking mempool size",
         "pending:",
         txStatus.pending,
-        "mempoolSize:",
         "queued:",
         txStatus.queued,
+        "requested mempoolSize:",
         memPoolSize
       );
       if (txStatus.pending > memPoolSize || txStatus.queued > memPoolSize) {
