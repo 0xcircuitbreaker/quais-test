@@ -157,3 +157,15 @@ export const shardToEnv = {
   "zone-2-1": "ZONE_2_1_COINBASE",
   "zone-2-2": "ZONE_2_2_COINBASE",
 };
+
+export const shardToName = {
+  "zone-0-0": "cyprus1",
+  "zone-0-1": "cyprus2",
+  "zone-0-2": "cyprus3",
+  "zone-1-0": "paxos1",
+  "zone-1-1": "paxos2",
+  "zone-1-2": "paxos3",
+  "zone-2-0": "hydra1",
+  "zone-2-1": "hydra2",
+  "zone-2-2": "hydra3",
+};
