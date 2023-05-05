@@ -22,7 +22,7 @@ async function main() {
 
   for (let i = 0; i < 20; i++) {
     genWallet["group-" + i] = {};
-    for (let j = 0; j < 8; j++) {
+    for (let j = 0; j < 20; j++) {
       const mnemonic = await generateRandomMnemonic();
       const keyfile = getWalletFromMnemonic(mnemonic);
       for (const shard of shards) {
@@ -33,7 +33,7 @@ async function main() {
         genWallet["group-" + i][shard] =
           genWallet["group-" + i][shard].concat(address);
         if (!walletBalances[shard]) walletBalances[shard] = {};
-        walletBalances[shard][address.address] = { balance: "10000000000000" };
+        walletBalances[shard][address.address] = { balance: "10000000000000000000000" };
       }
     }
   }
