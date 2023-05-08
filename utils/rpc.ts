@@ -86,6 +86,7 @@ export async function CheckMempoolBackoff(
       console.log("Mempool size acceptable, continue sending");
       return;
     } catch (err) {
+      console.log("err: ", err, currentRetry, maxRetries)
       if (currentRetry === maxRetries) {
 
         throw new RetryLimitExceededError("Retry limit exceeded.");

@@ -275,6 +275,7 @@ async function main() {
             rawTransaction.type = 2;
         }
 
+        console.log("rawTransaction", rawTransaction)
         const signedTransaction = await walletWithProvider.signTransaction(
             rawTransaction
         );
