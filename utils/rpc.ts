@@ -87,6 +87,7 @@ export async function CheckMempoolBackoff(
       return;
     } catch (err) {
       if (currentRetry === maxRetries) {
+
         throw new RetryLimitExceededError("Retry limit exceeded.");
       }
       await new Promise((resolve) => setTimeout(resolve, delay));
