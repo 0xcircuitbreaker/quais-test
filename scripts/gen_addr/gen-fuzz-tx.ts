@@ -83,6 +83,7 @@ const inputFilePath = "genWallet.json";
 
 const aggBalances: { [key: string]: number } = {};
 let errors = 0;
+let nonce = 0;
 
 async function main() {
     const from = parsed.flags.from;
@@ -122,7 +123,7 @@ async function main() {
 
     console.log("Sending Address: ", walletWithProvider.address);
 
-    let nonce = await provider.getTransactionCount(
+    nonce = await provider.getTransactionCount(
         walletWithProvider.address,
         "pending"
     );
@@ -288,7 +289,6 @@ async function main() {
             receiveAddr
         );
         await sleep(interval);
-        nonce++;
     }
     // end time
     const endTime = Date.now();
@@ -317,6 +317,7 @@ async function sendRawTransaction(url, signedHexValue, value, receiveAddr) {
     } catch (error) {
         errors++;
     }
+    nonce++;
 }
 
 function sleep(s: number) {
