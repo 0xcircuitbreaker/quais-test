@@ -9,8 +9,10 @@
     "axios": "^1.3.5",
     "bip39": "^3.1.0",
     "fs": "^0.0.1-security",
+    "https-browserify": "^1.0.0",
     "key-encoder": "^2.0.3",
     "quais": "^0.2.1",
+    "stream-http": "^3.2.0",
     "type-flag": "^3.0.0"
   },
   "devDependencies": {
