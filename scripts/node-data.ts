@@ -25,8 +25,8 @@ export const allNodeData: AllNodeData = {
     //   provider: "http://localhost:8582",
     // },
     "zone-0-0": {
-      url: "http://localhost:8610",
-      provider: "http://localhost:8610",
+      url: "https://rpc.cyprus1.colosseum.quaiscan.io",
+      provider: "https://rpc.cyprus1.colosseum.quaiscan.io",
     },
     "zone-0-1": {
       url: "ws://localhost:8542",
