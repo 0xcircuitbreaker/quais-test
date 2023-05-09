@@ -276,7 +276,6 @@ async function main() {
             rawTransaction.type = 2;
         }
 
-        console.log("rawTransaction", rawTransaction)
         const signedTransaction = await walletWithProvider.signTransaction(
             rawTransaction
         );
@@ -321,6 +320,7 @@ async function sendRawTransaction(url, signedHexValue, value, receiveAddr) {
 }
 
 function sleep(s: number) {
+    console.log("sleeping for ", s, "ms")
     return new Promise((resolve) => setTimeout(resolve, s));
 }
 
