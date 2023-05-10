@@ -191,7 +191,7 @@ Example: `ts-node scripts/gen_addr/gen-fuzz-tx.ts --f zone-0-1 -i 100 -t 100 -l 
 
 ### 7. Steps to reproduce react-native error
 
-1. Run `npm intall stream-http https-brwoerify`
+1. Run `npm intall stream-http https-browserify`
 2. Run `sed -i 's/require("http")/require("stream-http")/g' node_modules/quais/lib.commonjs/utils/geturl.js`
 3. Run `sed -i 's/require("https")/require("https-browserify")/g' node_modules/quais/lib.commonjs/utils/geturl.js`
 4. Run `sed -i "s/require('http')/require('stream-http')/g" node_modules/https-browserify/index.js`
