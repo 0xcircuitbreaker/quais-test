@@ -20,9 +20,9 @@ async function main() {
     fs.unlinkSync(envFilePath);
   }
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 10; i++) {
     genWallet["group-" + i] = {};
-    for (let j = 0; j < 20; j++) {
+    for (let j = 0; j < 340; j++) {
       const mnemonic = await generateRandomMnemonic();
       const keyfile = getWalletFromMnemonic(mnemonic);
       for (const shard of shards) {
