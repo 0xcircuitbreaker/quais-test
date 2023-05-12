@@ -77,7 +77,8 @@ function main() {
     const HDNode = quais.utils.HDNode.fromSeed(entropy);
     for (const shard of shards) {
         const childNode = getChildNode(HDNode, defaultHDPath, 0, shard);
-        console.log("Shard:", shard, "Address:", childNode.address);
+        console.log("Shard:", shard)
+        console.log("ChildNode:", childNode)
     }
 }
 
