@@ -289,6 +289,7 @@ async function main() {
       value,
       receiveAddr
     );
+
     await sleep(interval);
     activeWallet.nonce++;
     totalTxs++;

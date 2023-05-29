@@ -26,7 +26,7 @@ export const allNodeData: AllNodeData = {
     // },
     "zone-0-0": {
       url: "http://localhost:8610",
-      provider: "http://localhost:8610",
+      provider: "http://localhost:8611",
     },
     "zone-0-1": {
       url: "ws://localhost:8542",
