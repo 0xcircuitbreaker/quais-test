@@ -22,7 +22,7 @@ async function main() {
 
   for (let i = 0; i < 12; i++) {
     genWallet["group-" + i] = {};
-    for (let j = 0; j < 680; j++) {
+    for (let j = 0; j < 1360; j++) {
       const mnemonic = await generateRandomMnemonic();
       const keyfile = getWalletFromMnemonic(mnemonic);
       for (const shard of shards) {
