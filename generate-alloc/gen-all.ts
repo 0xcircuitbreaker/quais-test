@@ -7,7 +7,7 @@ import {
   shardToEnv,
   shardToName,
   shards,
-} from "../../utils/wallet";
+} from "../utils/wallet";
 import * as fs from "fs";
 
 const genWallet = {};

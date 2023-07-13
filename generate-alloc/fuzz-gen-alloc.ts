@@ -1,6 +1,6 @@
 import { quais } from "quais";
 import { allNodeData } from "../node-data";
-import { addressList2, shardList } from "../address-list";
+import { addressList2, shardList } from "../scripts/address-list";
 import { typeFlag } from "type-flag";
 import { getShardFromAddress, getRandomAddressInShard } from "../shard-data";
 import * as fs from "fs";
@@ -8,7 +8,7 @@ import {
   CheckBalanceBackoff,
   CheckMempoolBackoff,
   RetryLimitExceededError,
-} from "../../utils/rpc";
+} from "../utils/rpc";
 import axios from "axios";
 
 const parsed = typeFlag({

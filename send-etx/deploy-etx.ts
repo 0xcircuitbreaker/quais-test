@@ -1,6 +1,6 @@
 //load 'quais' and 'fs'
 import { quais } from "quais";
-import { allNodeData } from "./node-data";
+import { allNodeData } from "../node-data";
 import * as fs from 'fs';
 
 //Ussing async-await for deploy method

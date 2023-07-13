@@ -1,5 +1,5 @@
 import { quais } from "quais";
-import { allNodeData } from "../node-data";
+import { allNodeData } from "../../node-data";
 import { typeFlag } from "type-flag";
 import * as fs from "fs";
 

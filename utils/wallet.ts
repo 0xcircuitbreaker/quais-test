@@ -7,7 +7,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import { writeFile, unlink, readFile } from "fs/promises";
 import KeyEncoder from "key-encoder";
-import { getShardFromAddress } from "../scripts/shard-data";
+import { getShardFromAddress } from "../shard-data";
 import * as fs from "fs";
 
 // Options:

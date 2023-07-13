@@ -1,7 +1,7 @@
 import { quais } from "quais";
-import { allNodeData } from "./node-data";
+import { allNodeData } from "../node-data";
 import { getFlag } from 'type-flag'
-import { getShardFromAddress } from "./shard-data";
+import { getShardFromAddress } from "../shard-data";
 
 const address = getFlag("--address,-a", String);
 async function main() {
