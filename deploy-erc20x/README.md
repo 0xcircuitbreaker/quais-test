@@ -33,3 +33,13 @@ Additional Information
 The main() function in the script is asynchronous and uses the await keyword to handle Promises. It reads the wallet data from the JSON file and uses the quais library to create a wallet with a specified shard key. Then it compiles and deploys the token to the blockchain.
 
 Please note that the bytecode for the ERC20 contract is hardcoded in the script and may need to be updated to deploy a different ERC20 token contract.
+
+Get the bytecode.
+`solc --bin contracts/ETX.sol &> contracts/etx-compiled`
+`solc --bin contracts/ERC20X.sol &> contracts/erc20x-compiled`
+Or, with opcodes and binary:
+`solc --pretty-json --bin --asm contracts/ETX.sol &> contracts/compiled`
+
+Get the abi.
+`solc --abi contracts/ETX.sol -o contracts`
+`solc --abi contracts/ERC20X.sol -o contracts`
